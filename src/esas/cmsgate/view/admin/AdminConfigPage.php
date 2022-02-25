@@ -33,8 +33,8 @@ class AdminConfigPage extends Page
             css::elementLinkCssFontAwesome4Min(),
             css::elementLinkCssBootstrap4Min(),
             script::elementScriptJquery3Min(),
-            script::elementScriptBootstrap4Min(),
             script::elementScriptPopper1Min(),
+            script::elementScriptBootstrap4Min(),
             element::styleFile(dirname(__FILE__) . "/config.css"),
             element::scriptFile(dirname(__FILE__) . "/copyToClipboard.js")
         );

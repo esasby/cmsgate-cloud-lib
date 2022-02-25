@@ -162,6 +162,9 @@ class ConfigFormCloud extends ConfigFormHtml
             element::label(
                 attribute::forr($configField->getKey()),
                 attribute::clazz("col-sm-2 col-form-label"),
+                attribute::data_toggle("tooltip"),
+                attribute::data_placement("left"),
+                attribute::title($configField->getDescription()),
                 element::content($configField->getName()),
                 element::span(
                     attribute::data_toggle("tooltip"),

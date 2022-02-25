@@ -12,3 +12,7 @@ function copyToClipboard($inputId) {
     /* Alert the copied text */
     alert("Copied the text: " + copyText.value);
 }
+
+$(function () {
+    $("[data-toggle='tooltip']").tooltip();
+});
