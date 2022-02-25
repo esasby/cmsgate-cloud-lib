@@ -4,14 +4,13 @@
 namespace esas\cmsgate\view\admin;
 
 
-use esas\cmsgate\hutkigrosh\wrappers\ConfigWrapperHutkigrosh;
-use esas\cmsgate\lang\Translator;
 use esas\cmsgate\Registry;
 use esas\cmsgate\utils\htmlbuilder\Attributes as attribute;
 use esas\cmsgate\utils\htmlbuilder\Elements as element;
 use esas\cmsgate\utils\htmlbuilder\Page;
-use esas\cmsgate\utils\Logger;
-use esas\cmsgate\wrappers\OrderWrapper;
+use esas\cmsgate\utils\htmlbuilder\presets\CssPreset as css;
+use esas\cmsgate\utils\htmlbuilder\presets\ScriptsPreset as script;
+use esas\cmsgate\view\client\RequestParamsCloud;
 
 class AdminLoginPage extends Page
 {
@@ -21,8 +20,9 @@ class AdminLoginPage extends Page
      * AdminLoginPage constructor.
      * @param $loginFormAction
      */
-    public function __construct($loginFormAction)
+    public function __construct($loginFormAction = null)
     {
+        parent::__construct();
         $this->loginFormAction = $loginFormAction;
     }
 
@@ -36,14 +36,14 @@ class AdminLoginPage extends Page
             $this->elementHeadMetaCharset('utf-8'),
             element::meta(
                 attribute::name('viewport'),
-                attribute::content('width=device-width, initial-scale=1')),
-            $this->elementHeadLinkStylesheet("https://fonts.googleapis.com/css?family=Merienda+One"),
-            $this->elementHeadLinkStylesheet("https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"),
-            $this->elementHeadLinkStylesheet("https://fonts.googleapis.com/icon?family=Material+Icons"),
-            $this->elementHeadLinkStylesheet("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"),
-            $this->elementHeadScript("https://code.jquery.com/jquery-3.5.1.min.js"),
-            $this->elementHeadScript("https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"),
-            $this->elementHeadScript("https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"),
+                attribute::content('width=device-width, shrink-to-fit=no, initial-scale=1')),
+            css::elementLinkCssGoogleFonts("css?family=Merienda+One"),
+            css::elementLinkCssGoogleFonts("icon?family=Material+Icons"),
+            css::elementLinkCssFontAwesome4Min(),
+            css::elementLinkCssBootstrap4Min(),
+            script::elementScriptJquery3Min(),
+            script::elementScriptBootstrap4Min(),
+            script::elementScriptPopper1Min(),
             element::styleFile(dirname(__FILE__) . "/login.css")
         );
     }
@@ -59,7 +59,7 @@ class AdminLoginPage extends Page
             element::div(
                 attribute::clazz("login-form"),
                 element::form(
-                    attribute::action($this->getLoginFormAction()),
+                    $this->attributeLoginFormAction(),
                     attribute::method("post"),
                     element::div(
                         attribute::clazz("avatar"),
@@ -70,17 +70,40 @@ class AdminLoginPage extends Page
                     ),
                     element::h4(
                         attribute::clazz("modal-title"),
-                        "Login to Your Account"
+                        "Login to " . Registry::getRegistry()->getPaysystemConnector()->getPaySystemConnectorDescriptor()->getPaySystemMachinaName() . " account"
                     ),
                     $this->elementLoginInput(),
                     $this->elementPasswordInput(),
+                    $this->elementMessages(),
+                    $this->elementSubmitButton()
                 )
             )
         );
     }
 
-    public function getLoginFormAction() {
-        return $this->loginFormAction;
+    public function attributeLoginFormAction()
+    {
+        return $this->loginFormAction != null ? attribute::action($this->loginFormAction) : "";
+    }
+
+    public function elementMessages()
+    {
+        if (!Registry::getRegistry()->getMessenger()->hasErrorMessages())
+            return "";
+        $ret = "";
+        foreach (Registry::getRegistry()->getMessenger()->getErrorMessagesArray() as $message) {
+            $ret .= $this->elementMessage($message);
+        }
+        return $ret;
+    }
+
+    public function elementMessage($errorMessage)
+    {
+        return
+            element::div(
+                attribute::clazz("alert alert-warning"),
+                $errorMessage
+            );
     }
 
     public function elementLoginInput()
@@ -89,6 +112,8 @@ class AdminLoginPage extends Page
             element::div(
                 attribute::clazz("form-group"),
                 element::input(
+                    attribute::id(RequestParamsCloud::LOGIN_FORM_LOGIN),
+                    attribute::name(RequestParamsCloud::LOGIN_FORM_LOGIN),
                     attribute::clazz("form-control"),
                     attribute::type("text"),
                     attribute::placeholder("Username"),
@@ -103,11 +128,23 @@ class AdminLoginPage extends Page
             element::div(
                 attribute::clazz("form-group"),
                 element::input(
+                    attribute::id(RequestParamsCloud::LOGIN_FORM_PASSWORD),
+                    attribute::name(RequestParamsCloud::LOGIN_FORM_PASSWORD),
                     attribute::clazz("form-control"),
                     attribute::type("password"),
                     attribute::placeholder("Password"),
                     attribute::required()
                 )
+            );
+    }
+
+    public function elementSubmitButton()
+    {
+        return
+            element::input(
+                attribute::type("submit"),
+                attribute::clazz("btn btn-primary btn-block btn-lg"),
+                attribute::value("Login")
             );
     }
 }

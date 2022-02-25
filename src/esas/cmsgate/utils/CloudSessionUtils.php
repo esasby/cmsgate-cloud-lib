@@ -12,7 +12,7 @@ class CloudSessionUtils
     const SESSION_ORDER_CACHE_UUID = 'order_cache_UUID';
 
     public static function getOrderCacheUUID() {
-        return $_SESSION[self::SESSION_ORDER_CACHE_UUID];
+        return isset($_SESSION) ? $_SESSION[self::SESSION_ORDER_CACHE_UUID] : null;
     }
 
     public static function setOrderCacheUUID($uuid) {
@@ -25,7 +25,7 @@ class CloudSessionUtils
      * @return OrderCache
      */
     public static function getOrderCacheObj() {
-        return $_SESSION[self::SESSION_ORDER_CACHE_OBJECT];
+        return isset($_SESSION) ? $_SESSION[self::SESSION_ORDER_CACHE_OBJECT] : null;
     }
 
     public static function setOrderCacheObj($obj) {
@@ -35,7 +35,7 @@ class CloudSessionUtils
     const SESSION_CONFIG_CACHE_UUID = 'config_cache_UUID';
 
     public static function getConfigCacheUUID() {
-        return $_SESSION[self::SESSION_CONFIG_CACHE_UUID];
+        return isset($_SESSION) ?  $_SESSION[self::SESSION_CONFIG_CACHE_UUID] : null;
     }
 
     public static function setConfigCacheUUID($uuid) {
@@ -48,7 +48,7 @@ class CloudSessionUtils
      * @return ConfigCache
      */
     public static function getConfigCacheObj() {
-        return $_SESSION[self::SESSION_CONFIG_CACHE_OBJECT];
+        return isset($_SESSION) ?  $_SESSION[self::SESSION_CONFIG_CACHE_OBJECT] : null;
     }
 
     public static function setConfigCacheObj($obj) {

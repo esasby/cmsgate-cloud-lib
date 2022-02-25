@@ -30,7 +30,7 @@ class ConfigCacheService extends Service
             return $configCache;
         $cacheUUID = CloudSessionUtils::getConfigCacheUUID();
         if ($cacheUUID == null || $cacheUUID === '')
-            throw new CMSGateException('ConfigCache Id can not be found in session');
+            return null;
         $configCache = CloudRegistry::getRegistry()->getConfigCacheRepository()->getByUUID($cacheUUID);
         CloudSessionUtils::setConfigCacheObj($configCache);
         return $configCache;

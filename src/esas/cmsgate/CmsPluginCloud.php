@@ -3,6 +3,8 @@
 
 namespace esas\cmsgate;
 
+if (!class_exists("esas\cmsgate\CmsPlugin"))
+    require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/cmsgate-core/src/esas/cmsgate/CmsPlugin.php');
 
 class CmsPluginCloud extends CmsPlugin
 {

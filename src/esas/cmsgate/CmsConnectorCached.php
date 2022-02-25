@@ -53,15 +53,9 @@ abstract class CmsConnectorCached extends CmsConnector
 
     public function createConfigStorage()
     {
-        return new ConfigStorageCmsArray($this->mergeConfigFromCache());
+        return new ConfigStorageCloud();
     }
 
-    protected function mergeConfigFromCache() {
-        $orderCache = CloudRegistry::getRegistry()->getOrderCacheService()->getSessionOrderCacheSafe();
-        $configCache = CloudRegistry::getRegistry()->getConfigCacheService()->getSessionConfigCache(); // часть настроек может храниться в облаке
-        $configArray = $configCache == null ? $orderCache->getOrderData() : array_merge($orderCache->getOrderData(), $configCache->getConfigArray());
-        return $configArray;
-    }
 
     public function createLocaleLoader()
     {

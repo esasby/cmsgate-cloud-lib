@@ -40,7 +40,7 @@ class OrderCacheService extends Service
             return $cache;
         $cacheUUID = CloudSessionUtils::getOrderCacheUUID();
         if ($cacheUUID == null || $cacheUUID === '')
-            throw new CMSGateException('OrderCache UUI can not be found in session');
+            return null;
         $cache = CloudRegistry::getRegistry()->getOrderCacheRepository()->getByUUID($cacheUUID);
         CloudSessionUtils::setOrderCacheObj($cache);
         return $cache;

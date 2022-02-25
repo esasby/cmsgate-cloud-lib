@@ -11,18 +11,18 @@ use PDO;
  * Class OrderCacheRepositoryPDO
  * @package esas\cmsgate\cache
  * create table *_cache
-    (
-    id              varchar(36)  not null,
-    created_at      timestamp    null,
-    order_data      text         null,
-    order_data_hash char(32)     null,
-    ext_id          varchar(255) null,
-    status          varchar(30)  null,
-    constraint cache_ext_id_uindex
-    unique (ext_id),
-    constraint cache_id_uindex
-    unique (id)
-    );
+ * (
+ * id              varchar(36)  not null,
+ * created_at      timestamp    null,
+ * order_data      text         null,
+ * order_data_hash char(32)     null,
+ * ext_id          varchar(255) null,
+ * status          varchar(30)  null,
+ * constraint cache_ext_id_uindex
+ * unique (ext_id),
+ * constraint cache_id_uindex
+ * unique (id)
+ * );
  */
 class OrderCacheRepositoryPDO extends OrderCacheRepository
 {
@@ -52,9 +52,8 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
         if ($tableName != null)
             $this->tableName = $tableName;
         else
-            $this->tableName = Registry::getRegistry()->getCmsConnector()->getCmsConnectorDescriptor()->getCmsMachineName()
-                . Registry::getRegistry()->getPaySystemName()
-                . '_config_cache';
+            $this->tableName = Registry::getRegistry()->getModuleDescriptor()->getCmsAndPaysystemName()
+                . '_order_cache';
     }
 
     /**
@@ -74,7 +73,8 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
         return $uuid;
     }
 
-    private static function hashData($data) {
+    private static function hashData($data)
+    {
         return hash('md5', $data);
     }
 
@@ -102,7 +102,8 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
         ]);
     }
 
-    private function createOrderCacheObject($row) {
+    private function createOrderCacheObject($row)
+    {
         $orderData = CloudRegistry::getRegistry()->getCryptService()->decrypt($row['order_data']);
         return new OrderCache($row['id'], json_decode($orderData, true), $row['ext_id'], $row['status']);
     }

@@ -44,5 +44,7 @@ abstract class ConfigCacheRepository
 
     public abstract function getAuthHashById($id);
 
+    public abstract function saveConfigData($configCacheUUID, $configData);
+
 
 }

@@ -20,6 +20,7 @@ use esas\cmsgate\utils\CMSGateException;
 use esas\cmsgate\utils\Logger;
 use esas\cmsgate\utils\SessionUtils;
 use esas\cmsgate\view\admin\AdminConfigPage;
+use esas\cmsgate\view\admin\AdminLoginPage;
 use esas\cmsgate\view\admin\AdminViewFields;
 
 abstract class CloudRegistry
@@ -53,6 +54,11 @@ abstract class CloudRegistry
      * @var ApiAuthService
      */
     protected $apiAuthService;
+
+    /**
+     * @var AdminLoginPage
+     */
+    protected $adminLoginPage;
 
     /**
      * @var AdminConfigPage
@@ -194,7 +200,20 @@ abstract class CloudRegistry
     }
 
     /**
-     * Получение формы с настройками сделано через Registry, т.к. в некоторых CMS создание формы и ее валидация разнесены в разные хуки
+     * @return AdminLoginPage
+     */
+    public function getAdminLoginPage()
+    {
+        if ($this->adminLoginPage != null)
+            return $this->adminLoginPage;
+        else
+            $this->adminLoginPage = $this->createAdminLoginPage();
+        return $this->adminLoginPage;
+    }
+
+    public abstract function createAdminLoginPage();
+
+    /**
      * @return AdminConfigPage
      */
     public function getAdminConfigPage()
@@ -202,11 +221,11 @@ abstract class CloudRegistry
         if ($this->adminConfigPage != null)
             return $this->adminConfigPage;
         else
-            $this->configForm = $this->createConfigForm();
-        return $this->configForm;
+            $this->adminConfigPage = $this->createAdminConfigPage();
+        return $this->adminConfigPage;
     }
 
-    public abstract function createConfigForm();
+    public abstract function createAdminConfigPage();
 
 
 }

@@ -4,6 +4,7 @@
 namespace esas\cmsgate\view\admin;
 
 
+use esas\cmsgate\utils\CMSGateException;
 use esas\cmsgate\utils\htmlbuilder\Attributes as attribute;
 use esas\cmsgate\utils\htmlbuilder\Elements as element;
 use esas\cmsgate\utils\UploadedFileWrapper;
@@ -32,46 +33,67 @@ class ConfigFormCloud extends ConfigFormHtml
     {
         return
             element::form(
-                attribute::action($this->getSubmitUrl()),
+                ($this->getSubmitUrl() != null ? attribute::action($this->getSubmitUrl()) : ""),
                 attribute::method("post"),
                 attribute::enctype("multipart/form-data"),
                 attribute::id("config-form"),
-                element::div(
-                    attribute::clazz("wrap"),
-                    element::h2($this->getHeadingTitle()),
-                    element::table(
-                        attribute::clazz("form-table"),
-                        parent::generate() // добавляем поля
-                    )
-                ),
-                element::p(
-                    attribute::clazz("submit"),
-                    $this->elementSubmitButtons()
-                )
+                $this->elementConfigPanel()
             );
+
+    }
+
+    protected function elementConfigPanel()
+    {
+        return element::div(
+            attribute::clazz("card card-default"),
+            element::div(
+                attribute::clazz("card-header"),
+                $this->getHeadingTitle(),
+            ),
+            element::div(
+                attribute::clazz("card-body"),
+                parent::generate()
+            ),
+            element::div(
+                attribute::clazz("card-footer"),
+                element::div(
+                    attribute::clazz("row"),
+                    element::div(
+                        attribute::clazz("col col-sm-12 d-flex justify-content-end"),
+                        $this->elementSubmitButtons()
+                    )
+                )
+            )
+        );
     }
 
     protected function elementInputSubmit($name, $value)
     {
         return
             element::input(
-                attribute::clazz("button-primary"),
+                attribute::clazz("btn btn-dark"),
                 attribute::type("submit"),
                 attribute::name($name),
                 attribute::value($value)
             );
     }
 
-    /**
-     * Формирование html разметки для текстового поля. Он используется по умолчанию и для всех остальных типов полей
-     * (если не переопределены соответствующие методы)
-     * @param ConfigField $configField
-     * @return mixed
-     */
+    public static function elementFormGroup(ConfigField $configField, $input, ...$extraElements) {
+        return element::div(
+            attribute::clazz("form-group row"),
+            self::elementLabel($configField),
+            element::div(
+                attribute::clazz("col"),
+                $input
+            ),
+            $extraElements
+        );
+    }
+
     function generateTextField(ConfigField $configField)
     {
         return
-            self::elementTr(
+            self::elementFormGroup(
                 $configField,
                 self::elementInput($configField, "text")
             );
@@ -80,7 +102,7 @@ class ConfigFormCloud extends ConfigFormHtml
     public function generatePasswordField(ConfigFieldPassword $configField)
     {
         return
-            self::elementTr(
+            self::elementFormGroup(
                 $configField,
                 self::elementInput($configField, "password")
             );
@@ -89,16 +111,14 @@ class ConfigFormCloud extends ConfigFormHtml
     public function generateTextAreaField(ConfigFieldTextarea $configField)
     {
         return
-            self::elementTr(
+            self::elementFormGroup(
                 $configField,
                 element::textarea(
-                    attribute::rows("3"),
-                    attribute::cols("20"),
-                    attribute::clazz("input-text wide-input "),
+                    attribute::rows("12"),
+                    attribute::clazz("form-control "),
                     attribute::type("textarea"),
                     attribute::name($configField->getKey()),
                     attribute::id($configField->getKey()),
-                    attribute::style("max-width:80%;"),
                     element::content($configField->getValue())
                 )
             );
@@ -107,27 +127,11 @@ class ConfigFormCloud extends ConfigFormHtml
 
     public function generateFileField(ConfigFieldFile $configField)
     {
-        return
-            element::tr(
-                attribute::valign("top"),
-                self::elementTh($configField),
-                element::td(
-                    element::input(
-                        attribute::type("file"),
-                        attribute::name($configField->getKey())
-                    ),
-                    self::elementValidationError($configField),
-                    element::p(
-                        element::font(
-                            attribute::color($this->getFileColor($configField->getValue())),
-                            element::content($configField->getValue())
-                        )
-                    )
-                )
-            );
+        throw new CMSGateException("Not implemented");
     }
 
-    private function getFileColor($fileName) {
+    private function getFileColor($fileName)
+    {
         $file = new UploadedFileWrapper($fileName);
         return $file->isExists() ? "green" : "red";
     }
@@ -135,7 +139,7 @@ class ConfigFormCloud extends ConfigFormHtml
     public function generateCheckboxField(ConfigFieldCheckbox $configField)
     {
         return
-            self::elementTr(
+            self::elementFormGroup(
                 $configField,
                 element::input(
                     attribute::type("checkbox"),
@@ -148,16 +152,7 @@ class ConfigFormCloud extends ConfigFormHtml
 
     public function generateListField(ConfigFieldList $configField)
     {
-        return
-            self::elementTr(
-                $configField,
-                element::select(
-                    attribute::clazz("select"),
-                    attribute::name($configField->getKey()),
-                    attribute::id($configField->getKey()),
-                    parent::elementOptions($configField)
-                )
-            );
+        throw new CMSGateException("Not implemented");
     }
 
 
@@ -166,6 +161,7 @@ class ConfigFormCloud extends ConfigFormHtml
         return
             element::label(
                 attribute::forr($configField->getKey()),
+                attribute::clazz("col-sm-2 col-form-label"),
                 element::content($configField->getName()),
                 element::span(
                     attribute::data_toggle("tooltip"),
@@ -175,42 +171,17 @@ class ConfigFormCloud extends ConfigFormHtml
             );
     }
 
-    private static function elementInput(ConfigField $configField, $type)
+    public static function elementInput(ConfigField $configField, $type)
     {
         return
             element::input(
-                attribute::clazz("input-text regular-input"),
+                attribute::clazz("form-control"),
                 attribute::name($configField->getKey()),
                 attribute::type($type),
                 attribute::readOnly($configField->isReadOnly()),
                 attribute::id($configField->getKey()),
                 attribute::placeholder($configField->getName()),
                 attribute::value($configField->getValue())
-            );
-    }
-
-    private static function elementTr(ConfigField $configField, $thContent)
-    {
-        return
-            element::tr(
-                attribute::valign("top"),
-                self::elementTh($configField),
-                element::td(
-                    attribute::clazz("forminp"),
-                    $thContent,
-                    self::elementValidationError($configField)
-                )
-            );
-    }
-
-    private static function elementTh(ConfigField $configField)
-    {
-        return
-            element::th(
-                attribute::scope("row"),
-                attribute::clazz("titledesc"),
-//                element::content($configField->getName())
-                self::elementLabel($configField)
             );
     }
 
@@ -236,18 +207,5 @@ class ConfigFormCloud extends ConfigFormHtml
     public function createStatusListOptions()
     {
         return $this->orderStatuses;
-    }
-
-    public function addCmsManagedFields()
-    {
-        $this->managedFields->addField(new ConfigFieldCheckbox(
-            AdminViewFieldsCloud::API_SECRET,
-            'API Secret',
-            '',
-            false,
-            null,
-            true
-        ));
-        return $this;
     }
 }
