@@ -71,7 +71,7 @@ class ConfigFormCloud extends ConfigFormHtml
     {
         return
             element::input(
-                attribute::clazz("btn btn-dark"),
+                attribute::clazz("btn btn-secondary"),
                 attribute::type("submit"),
                 attribute::name($name),
                 attribute::value($value)

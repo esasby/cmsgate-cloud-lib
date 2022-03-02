@@ -25,4 +25,8 @@ class RedirectUtilsCloud
         $location = URLUtils::getCurrentURLMainPart() . PATH_CONFIG;
         return $sendHeader ? self::redirect($location) : $location;
     }
+
+    public static function secretGenerate() {
+        return URLUtils::getCurrentURLMainPart() . PATH_CONFIG_SECRET_NEW;
+    }
 }

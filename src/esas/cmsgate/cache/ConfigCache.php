@@ -86,6 +86,11 @@ class ConfigCache
         return $this->configArray;
     }
 
+    public function addToConfigArray($key, $value) {
+        $this->configArray[$key] = $value;
+        return $this;
+    }
+
     /**
      * @param mixed $configArray
      */

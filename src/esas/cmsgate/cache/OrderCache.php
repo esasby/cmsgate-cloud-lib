@@ -4,11 +4,12 @@
 namespace esas\cmsgate\cache;
 
 
-use esas\cmsgate\Registry;
+use esas\cmsgate\CloudRegistry;
 
 class OrderCache
 {
     private $uuid;
+    private $configId;
     private $status;
     /**
      * @var array
@@ -22,9 +23,10 @@ class OrderCache
      * @param $orderData
      * @param $extId
      */
-    public function __construct($uuid, $orderData, $extId, $status)
+    public function __construct($uuid, $configId, $orderData, $extId, $status)
     {
         $this->uuid = $uuid;
+        $this->configId = $configId;
         $this->orderData = $orderData;
         $this->extId = $extId;
         $this->status = $status;
@@ -69,6 +71,22 @@ class OrderCache
     public function setExtId($extId)
     {
         $this->extId = $extId;
-        Registry::getRegistry()->getCacheRepository()->saveExtId($this->uuid, $this->extId);
+        CloudRegistry::getRegistry()->getOrderCacheRepository()->saveExtId($this->uuid, $this->extId);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConfigId()
+    {
+        return $this->configId;
+    }
+
+    /**
+     * @param mixed $configId
+     */
+    public function setConfigId($configId): void
+    {
+        $this->configId = $configId;
     }
 }

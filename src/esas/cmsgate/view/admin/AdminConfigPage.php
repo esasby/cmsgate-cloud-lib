@@ -60,7 +60,7 @@ class AdminConfigPage extends Page
                     )
                 ),
                 element::a(
-                    attribute::clazz("nav-link btn btn-outline-success my-2 my-sm-0"),
+                    attribute::clazz("nav-link btn btn-outline-warning my-2 my-sm-0 btn-sm"),
                     attribute::href(RedirectUtilsCloud::logout()),
                     "Logout"
                 )
@@ -108,12 +108,18 @@ class AdminConfigPage extends Page
                             $configField,
                             ConfigFormCloud::elementInput($configField, "text"),
                             element::div(
-                                attribute::clazz('col'),
+                                attribute::clazz('btn-group col col-sm-2 pl-0'),
                                 element::button(
                                     attribute::type("button"),
+                                    attribute::role("group"),
                                     attribute::onclick("copyToClipboard('" . $configField->getKey() . "')"),
-                                    attribute::clazz("btn btn-dark"),
+                                    attribute::clazz("btn btn-secondary"),
                                     "Copy"
+                                ),
+                                element::a(
+                                    attribute::href(RedirectUtilsCloud::secretGenerate()),
+                                    attribute::clazz("btn btn-secondary"),
+                                    "Generate"
                                 ),
                             )
                         )

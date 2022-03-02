@@ -18,10 +18,9 @@ use esas\cmsgate\cache\ConfigCacheService;
 use esas\cmsgate\cache\ConfigCacheRepository;
 use esas\cmsgate\utils\CMSGateException;
 use esas\cmsgate\utils\Logger;
-use esas\cmsgate\utils\SessionUtils;
 use esas\cmsgate\view\admin\AdminConfigPage;
 use esas\cmsgate\view\admin\AdminLoginPage;
-use esas\cmsgate\view\admin\AdminViewFields;
+use esas\cmsgate\security\AuthConfigMapper;
 
 abstract class CloudRegistry
 {
@@ -59,6 +58,11 @@ abstract class CloudRegistry
      * @var AdminLoginPage
      */
     protected $adminLoginPage;
+
+    /**
+     * @var AuthConfigMapper
+     */
+    protected $authConfigMapper;
 
     /**
      * @var AdminConfigPage
@@ -227,5 +231,16 @@ abstract class CloudRegistry
 
     public abstract function createAdminConfigPage();
 
+    /**
+     * @return AuthConfigMapper
+     */
+    public function getAuthConfigMapper() {
+        if ($this->authConfigMapper != null)
+            return $this->authConfigMapper;
+        else
+            $this->authConfigMapper = $this->createAuthConfigMapper();
+        return $this->authConfigMapper;
+    }
 
+    public abstract function createAuthConfigMapper();
 }

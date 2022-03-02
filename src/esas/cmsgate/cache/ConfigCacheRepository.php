@@ -28,6 +28,8 @@ abstract class ConfigCacheRepository
      */
     public abstract function getSecretByLogin($login);
 
+    public abstract function saveSecret($cacheConfigUUID, $secret);
+
     /**
      * @param $cacheConfigUUID
      * @return ConfigCache

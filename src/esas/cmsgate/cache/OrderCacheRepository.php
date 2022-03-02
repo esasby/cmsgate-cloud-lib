@@ -24,7 +24,7 @@ abstract class OrderCacheRepository
 
     }
 
-    public abstract function add($orderData);
+    public abstract function add($orderData, $configId);
 
     /**
      * @param $uuid string

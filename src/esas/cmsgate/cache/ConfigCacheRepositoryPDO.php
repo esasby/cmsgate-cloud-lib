@@ -151,4 +151,14 @@ class ConfigCacheRepositoryPDO extends ConfigCacheRepository
             self::COLUMN_CONFIG_DATA => CloudRegistry::getRegistry()->getCryptService()->encrypt($configData)
         ]);
     }
+
+    public function saveSecret($cacheConfigUUID, $secret)
+    {
+        $sql = "UPDATE $this->tableName set secret = :secret where id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'id' => $cacheConfigUUID,
+            'secret' => CloudRegistry::getRegistry()->getCryptService()->encrypt($secret),
+        ]);
+    }
 }

@@ -33,17 +33,10 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
 
     protected $tableName;
 
-//    public function __construct($dsn, $user, $pass, $tableName)
-//    {
-//        parent::__construct();
-//        $opt = [
-//            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-//            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-//            PDO::ATTR_EMULATE_PREPARES => false,
-//        ];
-//        $this->pdo = new PDO($dsn, $user, $pass, $opt);
-//        $this->tableName = $tableName;
-//    }
+    const COLUMN_ID = 'id';
+    const COLUMN_CONFIG_ID = 'config_id';
+    const COLUMN_EXT_ID = 'ext_id';
+    const COLUMN_STATUS = 'status';
 
     public function __construct($pdo, $tableName = null)
     {
@@ -58,15 +51,18 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
 
     /**
      * @param $orderData OrderCache
+     * @param $configId
+     * @return string
      */
-    public function add($orderData)
+    public function add($orderData, $configId)
     {
         $uuid = StringUtils::guidv4();
         $orderData = json_encode($orderData);
-        $sql = "INSERT INTO $this->tableName (id, created_at, order_data, order_data_hash, status) VALUES (:uuid, CURRENT_TIMESTAMP,  :order_data, :order_data_hash, 'new')";
+        $sql = "INSERT INTO $this->tableName (id, config_id, created_at, order_data, order_data_hash, status) VALUES (:uuid, :config_id, CURRENT_TIMESTAMP,  :order_data, :order_data_hash, 'new')";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             'uuid' => $uuid,
+            'config_id' => $configId,
             'order_data' => CloudRegistry::getRegistry()->getCryptService()->encrypt($orderData),
             'order_data_hash' => self::hashData($orderData),
         ]);
@@ -80,7 +76,7 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
 
     public function getByUUID($cacheUUID)
     {
-        $sql = "select id, order_data, ext_id, status from $this->tableName where id = :uuid";
+        $sql = "select * from $this->tableName where id = :uuid";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             'uuid' => $cacheUUID,
@@ -105,12 +101,17 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
     private function createOrderCacheObject($row)
     {
         $orderData = CloudRegistry::getRegistry()->getCryptService()->decrypt($row['order_data']);
-        return new OrderCache($row['id'], json_decode($orderData, true), $row['ext_id'], $row['status']);
+        return new OrderCache(
+            $row[self::COLUMN_ID],
+            $row[self::COLUMN_CONFIG_ID],
+            json_decode($orderData, true),
+            $row[self::COLUMN_EXT_ID],
+            $row[self::COLUMN_STATUS]);
     }
 
     public function getByExtId($extId)
     {
-        $sql = "select id, order_data, ext_id, status from $this->tableName where ext_id = :extid";
+        $sql = "select * from $this->tableName where ext_id = :extid";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             'extid' => $extId,
@@ -125,7 +126,7 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
     public function getByData($orderData)
     {
         $orderData = json_encode($orderData);
-        $sql = "select id, order_data, ext_id, status from $this->tableName where order_data_hash = :order_data_hash";
+        $sql = "select * from $this->tableName where order_data_hash = :order_data_hash";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             'order_data_hash' => self::hashData($orderData),

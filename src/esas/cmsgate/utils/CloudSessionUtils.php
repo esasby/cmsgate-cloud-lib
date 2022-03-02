@@ -35,7 +35,7 @@ class CloudSessionUtils
     const SESSION_CONFIG_CACHE_UUID = 'config_cache_UUID';
 
     public static function getConfigCacheUUID() {
-        return isset($_SESSION) ?  $_SESSION[self::SESSION_CONFIG_CACHE_UUID] : null;
+        return isset($_SESSION) ? $_SESSION[self::SESSION_CONFIG_CACHE_UUID] : null;
     }
 
     public static function setConfigCacheUUID($uuid) {
@@ -51,7 +51,7 @@ class CloudSessionUtils
         return isset($_SESSION) ?  $_SESSION[self::SESSION_CONFIG_CACHE_OBJECT] : null;
     }
 
-    public static function setConfigCacheObj($obj) {
+    public static function setConfigCacheObj(ConfigCache $obj) {
         $_SESSION[self::SESSION_CONFIG_CACHE_OBJECT] = $obj;
     }
 }

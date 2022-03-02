@@ -25,7 +25,7 @@ class OrderCacheService extends Service
             CloudSessionUtils::setOrderCacheUUID($cache->getUuid());
             CloudSessionUtils::setOrderCacheObj($cache);
         } else {
-            $uuid = CloudRegistry::getRegistry()->getOrderCacheRepository()->add($orderData);
+            $uuid = CloudRegistry::getRegistry()->getOrderCacheRepository()->add($orderData, CloudSessionUtils::getConfigCacheUUID());
             CloudSessionUtils::setOrderCacheUUID($uuid);
         }
     }
