@@ -6,9 +6,6 @@ namespace esas\cmsgate\controllers;
 
 use esas\cmsgate\CloudRegistry;
 use esas\cmsgate\Registry;
-use esas\cmsgate\utils\CMSGateException;
-use esas\cmsgate\utils\RedirectUtilsCloud;
-use esas\cmsgate\view\admin\CookieCloud;
 use Exception;
 use Throwable;
 
@@ -18,21 +15,15 @@ class ControllerCloudConfig extends Controller
     {
         (new ControllerCloudCheckAuth())->process(true);
         try {
-            switch ($_SERVER['REQUEST_METHOD']) {
-                case 'GET':
-                    $adminConfigPage = CloudRegistry::getRegistry()->getAdminConfigPage();
-                    $adminConfigPage->render();
-                    break;
-                case 'POST':
-                    Registry::getRegistry()->getConfigForm()->save();
-                    RedirectUtilsCloud::configPage(true);
-                    break;
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                Registry::getRegistry()->getConfigForm()->validate();
+                Registry::getRegistry()->getConfigForm()->save();
             }
         } catch (Throwable $e) {
-            CloudRegistry::getRegistry()->getAdminConfigPage();
+            Registry::getRegistry()->getMessenger()->addErrorMessage($e->getMessage());
         } catch (Exception $e) { // для совместимости с php 5
-            CloudRegistry::getRegistry()->getAdminConfigPage();
+            Registry::getRegistry()->getMessenger()->addErrorMessage($e->getMessage());
         }
-
+        CloudRegistry::getRegistry()->getAdminConfigPage()->render();
     }
 }

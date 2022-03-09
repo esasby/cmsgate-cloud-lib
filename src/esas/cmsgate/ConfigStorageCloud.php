@@ -26,6 +26,7 @@ class ConfigStorageCloud extends ConfigStorageCmsArray
     public function saveConfigs($keyValueArray)
     {
         CloudRegistry::getRegistry()->getConfigCacheRepository()->saveConfigData(CloudSessionUtils::getConfigCacheUUID(), $keyValueArray);
+        $this->configArray = $keyValueArray;
     }
 
     protected function mergeConfigFromCache()

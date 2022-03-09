@@ -84,10 +84,22 @@ class ConfigFormCloud extends ConfigFormHtml
             self::elementLabel($configField),
             element::div(
                 attribute::clazz("col"),
-                $input
+                $input,
+                self::elementInputValidationDetails($configField)
             ),
             $extraElements
         );
+    }
+
+    public static function elementInputValidationDetails(ConfigField $configField) {
+        $validationResult = $configField->getValidationResult();
+        if ($validationResult == null || $validationResult->isValid())
+            return '';
+        else
+            return element::small(
+                attribute::clazz('text-danger'),
+                $validationResult->getErrorTextSimple()
+            );
     }
 
     function generateTextField(ConfigField $configField)
@@ -178,7 +190,7 @@ class ConfigFormCloud extends ConfigFormHtml
     {
         return
             element::input(
-                attribute::clazz("form-control"),
+                attribute::clazz("form-control " . ($configField->isValid() ? "" : "border-danger")),
                 attribute::name($configField->getKey()),
                 attribute::type($type),
                 attribute::readOnly($configField->isReadOnly()),

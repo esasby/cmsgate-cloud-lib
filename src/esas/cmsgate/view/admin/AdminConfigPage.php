@@ -70,6 +70,7 @@ class AdminConfigPage extends Page
                 attribute::clazz("container"),
                 $this->elementSecret(),
                 element::br(),
+                $this->elementMessages(),
                 $this->elementConfigForms(),
                 element::br()
             ),
