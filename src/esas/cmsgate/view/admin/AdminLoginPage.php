@@ -86,26 +86,6 @@ class AdminLoginPage extends Page
         return $this->loginFormAction != null ? attribute::action($this->loginFormAction) : "";
     }
 
-    public function elementMessages()
-    {
-        if (!Registry::getRegistry()->getMessenger()->hasErrorMessages())
-            return "";
-        $ret = "";
-        foreach (Registry::getRegistry()->getMessenger()->getErrorMessagesArray() as $message) {
-            $ret .= $this->elementMessage($message);
-        }
-        return $ret;
-    }
-
-    public function elementMessage($errorMessage)
-    {
-        return
-            element::div(
-                attribute::clazz("alert alert-warning"),
-                $errorMessage
-            );
-    }
-
     public function elementLoginInput()
     {
         return

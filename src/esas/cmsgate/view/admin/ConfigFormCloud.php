@@ -164,7 +164,16 @@ class ConfigFormCloud extends ConfigFormHtml
 
     public function generateListField(ConfigFieldList $configField)
     {
-        throw new CMSGateException("Not implemented");
+        return
+            self::elementFormGroup(
+                $configField,
+                element::select(
+                    attribute::clazz("form-control"),
+                    attribute::name($configField->getKey()),
+                    attribute::id($configField->getKey()),
+                    parent::elementOptions($configField)
+                )
+            );
     }
 
 
