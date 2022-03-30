@@ -13,6 +13,8 @@ class OrderCacheService extends Service
 {
     public function loadSessionOrderCacheByExtId($extId) {
         $orderCache = CloudRegistry::getRegistry()->getOrderCacheRepository()->getByExtId($extId);
+        if ($orderCache == null)
+            throw new CMSGateException('Unknown external invoice id [' . $extId . "]");
         CloudSessionUtils::setOrderCacheObj($orderCache);
         CloudSessionUtils::setOrderCacheUUID($orderCache->getUuid());
     }
