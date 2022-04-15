@@ -4,6 +4,7 @@
 namespace esas\cmsgate\view\admin;
 
 
+use esas\cmsgate\CloudRegistry;
 use esas\cmsgate\Registry;
 use esas\cmsgate\utils\htmlbuilder\Attributes as attribute;
 use esas\cmsgate\utils\htmlbuilder\Elements as element;
@@ -70,7 +71,7 @@ class AdminLoginPage extends Page
                     ),
                     element::h4(
                         attribute::clazz("modal-title"),
-                        "Login to " . Registry::getRegistry()->getPaysystemConnector()->getPaySystemConnectorDescriptor()->getPaySystemMachinaName() . " account"
+                        "Login to " . Registry::getRegistry()->getPaysystemConnector()->getPaySystemConnectorDescriptor()->getPaySystemMachinaName() . AdminConfigPage::elementTestLabel()
                     ),
                     $this->elementLoginInput(),
                     $this->elementPasswordInput(),

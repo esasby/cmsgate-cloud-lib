@@ -50,7 +50,12 @@ class AdminConfigPage extends Page
         return element::body(
             element::nav(
                 attribute::clazz("navbar navbar-expand-md navbar-dark fixed-top bg-dark"),
-                common::elementATop("navbar-brand", Registry::getRegistry()->getModuleDescriptor()->getModuleFullName()),
+                element::a(
+                    attribute::clazz("navbar-brand"),
+                    attribute::href('#'),
+                    element::content(
+                        Registry::getRegistry()->getModuleDescriptor()->getModuleFullName() . self::elementTestLabel())
+                ),
                 element::div(
                     attribute::clazz("collapse navbar-collapse"),
                     attribute::id("navbarCollapse"),
@@ -127,5 +132,13 @@ class AdminConfigPage extends Page
                     )
                 )
             );
+    }
+
+    public static function elementTestLabel()
+    {
+        return
+            CloudRegistry::getRegistry()->isSandbox() ? element::small(
+                attribute::style('color: #EC9941!important; vertical-align: sub'),
+                'test') : "";
     }
 }
