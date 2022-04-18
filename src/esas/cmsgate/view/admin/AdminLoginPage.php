@@ -97,10 +97,14 @@ class AdminLoginPage extends Page
                     attribute::name(RequestParamsCloud::LOGIN_FORM_LOGIN),
                     attribute::clazz("form-control"),
                     attribute::type("text"),
-                    attribute::placeholder("Username"),
+                    attribute::placeholder($this->getLoginPlaceholder()),
                     attribute::required()
                 )
             );
+    }
+
+    protected function getLoginPlaceholder() {
+        return "Username";
     }
 
     public function elementPasswordInput()
@@ -113,10 +117,14 @@ class AdminLoginPage extends Page
                     attribute::name(RequestParamsCloud::LOGIN_FORM_PASSWORD),
                     attribute::clazz("form-control"),
                     attribute::type("password"),
-                    attribute::placeholder("Password"),
+                    attribute::placeholder($this->getPasswordPlaceholder()),
                     attribute::required()
                 )
             );
+    }
+
+    protected function getPasswordPlaceholder() {
+        return "Password";
     }
 
     public function elementSubmitButton()
