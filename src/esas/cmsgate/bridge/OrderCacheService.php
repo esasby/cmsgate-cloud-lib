@@ -1,34 +1,34 @@
 <?php
 
 
-namespace esas\cmsgate\cache;
+namespace esas\cmsgate\bridge;
 
 
-use esas\cmsgate\CloudRegistry;
+use esas\cmsgate\BridgeConnector;
 use esas\cmsgate\service\Service;
-use esas\cmsgate\utils\CloudSessionUtils;
+use esas\cmsgate\utils\SessionUtilsBridge;
 use esas\cmsgate\utils\CMSGateException;
 
 class OrderCacheService extends Service
 {
     public function loadSessionOrderCacheByExtId($extId) {
-        $orderCache = CloudRegistry::getRegistry()->getOrderCacheRepository()->getByExtId($extId);
+        $orderCache = BridgeConnector::fromRegistry()->getOrderCacheRepository()->getByExtId($extId);
         if ($orderCache == null)
             throw new CMSGateException('Unknown external invoice id [' . $extId . "]");
-        CloudSessionUtils::setOrderCacheObj($orderCache);
-        CloudSessionUtils::setOrderCacheUUID($orderCache->getUuid());
+        SessionUtilsBridge::setOrderCacheObj($orderCache);
+        SessionUtilsBridge::setOrderCacheUUID($orderCache->getUuid());
     }
 
     public function addSessionOrderCache($orderData) {
         if ($orderData == null || empty($orderData))
             throw new CMSGateException('Incorrect request');
-        $cache = CloudRegistry::getRegistry()->getOrderCacheRepository()->getByData($orderData);
+        $cache = BridgeConnector::fromRegistry()->getOrderCacheRepository()->getByData($orderData);
         if ($cache != null) {
-            CloudSessionUtils::setOrderCacheUUID($cache->getUuid());
-            CloudSessionUtils::setOrderCacheObj($cache);
+            SessionUtilsBridge::setOrderCacheUUID($cache->getUuid());
+            SessionUtilsBridge::setOrderCacheObj($cache);
         } else {
-            $uuid = CloudRegistry::getRegistry()->getOrderCacheRepository()->add($orderData, CloudSessionUtils::getConfigCacheUUID());
-            CloudSessionUtils::setOrderCacheUUID($uuid);
+            $uuid = BridgeConnector::fromRegistry()->getOrderCacheRepository()->add($orderData, SessionUtilsBridge::getShopConfigUUID());
+            SessionUtilsBridge::setOrderCacheUUID($uuid);
         }
     }
 
@@ -37,14 +37,14 @@ class OrderCacheService extends Service
      * @throws CMSGateException
      */
     public function getSessionOrderCache() {
-        $cache = CloudSessionUtils::getOrderCacheObj();
+        $cache = SessionUtilsBridge::getOrderCacheObj();
         if ($cache != null)
             return $cache;
-        $cacheUUID = CloudSessionUtils::getOrderCacheUUID();
+        $cacheUUID = SessionUtilsBridge::getOrderCacheUUID();
         if ($cacheUUID == null || $cacheUUID === '')
             return null;
-        $cache = CloudRegistry::getRegistry()->getOrderCacheRepository()->getByUUID($cacheUUID);
-        CloudSessionUtils::setOrderCacheObj($cache);
+        $cache = BridgeConnector::fromRegistry()->getOrderCacheRepository()->getByUUID($cacheUUID);
+        SessionUtilsBridge::setOrderCacheObj($cache);
         return $cache;
     }
 

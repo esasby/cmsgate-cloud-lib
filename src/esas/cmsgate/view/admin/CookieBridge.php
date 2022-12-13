@@ -9,7 +9,7 @@
 namespace esas\cmsgate\view\admin;
 
 
-class CookieCloud
+class CookieBridge
 {
     const ID = 'id';
     const HASH = 'hash';

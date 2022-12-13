@@ -4,7 +4,7 @@
 namespace esas\cmsgate\utils;
 
 
-class RedirectUtilsCloud
+class RedirectUtilsBridge
 {
     public static function redirect($location) {
         header('Location: '. $location);

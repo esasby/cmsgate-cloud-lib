@@ -9,21 +9,29 @@
 namespace esas\cmsgate;
 
 
-use esas\cmsgate\cache\OrderCacheRepository;
-use esas\cmsgate\cache\OrderCacheService;
-use esas\cmsgate\security\ApiAuthService;
+use esas\cmsgate\bridge\OrderCacheRepository;
+use esas\cmsgate\bridge\OrderCacheService;
+use esas\cmsgate\security\CmsAuthService;
 use esas\cmsgate\security\CryptService;
 use esas\cmsgate\security\CryptServiceImpl;
-use esas\cmsgate\cache\ConfigCacheService;
-use esas\cmsgate\cache\ConfigCacheRepository;
+use esas\cmsgate\bridge\ShopConfigService;
+use esas\cmsgate\bridge\ShopConfigRepository;
 use esas\cmsgate\utils\CMSGateException;
-use esas\cmsgate\utils\Logger;
 use esas\cmsgate\view\admin\AdminConfigPage;
 use esas\cmsgate\view\admin\AdminLoginPage;
-use esas\cmsgate\security\AuthConfigMapper;
 
-abstract class CloudRegistry
+abstract class BridgeConnector
 {
+    const BRIDGE_CONNECTOR_SERVICE_NAME = 'BridgeConnector';
+    /**
+     * Для удобства работы в IDE и подсветки синтаксиса.
+     * @return $this
+     */
+    public static function fromRegistry()
+    {
+        return Registry::getRegistry()->getService(BRIDGE_CONNECTOR_SERVICE_NAME);
+    }
+
     /**
      * @var OrderCacheRepository
      */
@@ -40,19 +48,14 @@ abstract class CloudRegistry
     protected $cryptService;
 
     /**
-     * @var ConfigCacheRepository
+     * @var ShopConfigRepository
      */
     protected $configCacheRepository;
 
     /**
-     * @var ConfigCacheService
+     * @var ShopConfigService
      */
     protected $configCacheService;
-
-    /**
-     * @var ApiAuthService
-     */
-    protected $apiAuthService;
 
     /**
      * @var AdminLoginPage
@@ -60,47 +63,9 @@ abstract class CloudRegistry
     protected $adminLoginPage;
 
     /**
-     * @var AuthConfigMapper
-     */
-    protected $authConfigMapper;
-
-    /**
      * @var AdminConfigPage
      */
     protected $adminConfigPage;
-
-    public function init() {
-        $registryName = self::getUniqRegistryName();
-        global $$registryName;
-        if ($$registryName == null) {
-            $$registryName = $this;
-        }
-    }
-
-    /**
-     * В случае, если в CMS одновеременно установлено несколько cmsgate плагинов,
-     * Registry каждого должны быть сохранен в global под разными именами
-     * Для уникальности генерируем хэш по пути текущего файла
-     * @return string
-     */
-    private static function getUniqRegistryName() {
-        return "cmsCloudRegistry_" . hash('md5', __FILE__);
-    }
-
-    /**
-     * @return CloudRegistry
-     */
-    public static function getRegistry() {
-        /**
-         * @var $esasRegistry
-         */
-        $registryName = self::getUniqRegistryName();
-        global $$registryName;
-        if ($$registryName == null) {
-            Logger::getLogger("cloudRegistry")->fatal("CMSGate cloud registry is not initialized!");
-        }
-        return $$registryName;
-    }
 
     /**
      * @return OrderCacheRepository
@@ -135,16 +100,16 @@ abstract class CloudRegistry
     }
 
     /**
-     * @return ConfigCacheRepository
+     * @return ShopConfigRepository
      */
-    public function getConfigCacheRepository() {
+    public function getShopConfigRepository() {
         if ($this->configCacheRepository == null)
             $this->configCacheRepository = $this->createConfigCacheRepository();
         return $this->configCacheRepository;
     }
 
     /**
-     * @return ConfigCacheRepository
+     * @return ShopConfigRepository
      * @throws CMSGateException
      */
     protected abstract function createConfigCacheRepository();
@@ -167,36 +132,21 @@ abstract class CloudRegistry
     }
 
     /**
-     * @return ConfigCacheService
+     * @return ShopConfigService
      */
-    public function getConfigCacheService() {
+    public function getShopConfigService() {
         if ($this->configCacheService == null)
-            $this->configCacheService = $this->createConfigCacheService();
+            $this->configCacheService = $this->createShopConfigService();
         return $this->configCacheService;
     }
 
     /**
-     * @return ConfigCacheService
+     * @return ShopConfigService
      * @throws CMSGateException
      */
-    protected function createConfigCacheService() {
-        return new ConfigCacheService();
+    protected function createShopConfigService() {
+        return new ShopConfigService();
     }
-
-    /**
-     * @return ApiAuthService
-     */
-    public function getApiAuthService() {
-        if ($this->apiAuthService == null)
-            $this->apiAuthService = $this->createApiAuthService();
-        return $this->apiAuthService;
-    }
-
-    /**
-     * @return ApiAuthService
-     * @throws CMSGateException
-     */
-    protected abstract function createApiAuthService();
 
     public function isSandbox()
     {
@@ -232,15 +182,30 @@ abstract class CloudRegistry
     public abstract function createAdminConfigPage();
 
     /**
-     * @return AuthConfigMapper
+     * @var CmsAuthService
      */
-    public function getAuthConfigMapper() {
-        if ($this->authConfigMapper != null)
-            return $this->authConfigMapper;
-        else
-            $this->authConfigMapper = $this->createAuthConfigMapper();
-        return $this->authConfigMapper;
+    protected $cmsAuthService;
+
+    /**
+     * @return CmsAuthService
+     */
+    public function getCmsAuthService() {
+        if ($this->cmsAuthService == null)
+            $this->cmsAuthService = $this->createCmsAuthService();
+        return $this->cmsAuthService;
     }
 
-    public abstract function createAuthConfigMapper();
+    /**
+     * @return CmsAuthService
+     * @throws CMSGateException
+     */
+    protected abstract function createCmsAuthService();
+
+    public function getBridgeUrlReal() {
+        return sprintf('https://cmsgate.esas.by/cmsgate-%s', Registry::getRegistry()->getModuleDescriptor()->getCmsAndPaysystemName('-')); //todo fix
+    }
+
+    public function getBridgeUrlSandbox() {
+        return sprintf('https://test-cmsgate.esas.by/cmsgate-%s', Registry::getRegistry()->getModuleDescriptor()->getCmsAndPaysystemName('-'));
+    }
 }

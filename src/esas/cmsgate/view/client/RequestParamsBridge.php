@@ -9,7 +9,7 @@
 namespace esas\cmsgate\view\client;
 
 
-class RequestParamsCloud
+class RequestParamsBridge
 {
     const LOGIN_FORM_LOGIN = 'login';
     const LOGIN_FORM_PASSWORD = 'password';

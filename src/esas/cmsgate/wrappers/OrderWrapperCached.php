@@ -2,8 +2,8 @@
 
 namespace esas\cmsgate\wrappers;
 
-use esas\cmsgate\cache\OrderCache;
-use esas\cmsgate\CloudRegistry;
+use esas\cmsgate\bridge\OrderCache;
+use esas\cmsgate\BridgeConnector;
 use esas\cmsgate\OrderStatus;
 
 abstract class OrderWrapperCached extends OrderSafeWrapper
@@ -41,7 +41,7 @@ abstract class OrderWrapperCached extends OrderSafeWrapper
      */
     public function updateStatus($newOrderStatus)
     {
-        CloudRegistry::getRegistry()->getOrderCacheRepository()->setStatus($this->orderCache->getUuid(), $newOrderStatus->getOrderStatus());
+        BridgeConnector::fromRegistry()->getOrderCacheRepository()->setStatus($this->orderCache->getUuid(), $newOrderStatus->getOrderStatus());
     }
 
     /**

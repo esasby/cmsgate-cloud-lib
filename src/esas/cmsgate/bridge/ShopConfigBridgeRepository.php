@@ -1,27 +1,12 @@
 <?php
 
 
-namespace esas\cmsgate\cache;
+namespace esas\cmsgate\bridge;
 
 
-use esas\cmsgate\utils\Logger;
 
-abstract class ConfigCacheRepository
+abstract class ShopConfigBridgeRepository extends ShopConfigRepository
 {
-    /**
-     * @var Logger
-     */
-    protected $logger;
-
-    /**
-     * OrderCacheRepository constructor.
-     */
-    public function __construct()
-    {
-        $this->logger = Logger::getLogger(get_class($this));
-
-    }
-
     /**
      * @param $login
      * @return string
@@ -31,14 +16,8 @@ abstract class ConfigCacheRepository
     public abstract function saveSecret($cacheConfigUUID, $secret);
 
     /**
-     * @param $cacheConfigUUID
-     * @return ConfigCache
-     */
-    public abstract function getByUUID($cacheConfigUUID);
-
-    /**
      * @param $login
-     * @return ConfigCache
+     * @return ShopConfig
      */
     public abstract function getByLogin($login);
 

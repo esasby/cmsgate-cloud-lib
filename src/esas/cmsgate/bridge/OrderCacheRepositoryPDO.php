@@ -1,15 +1,15 @@
 <?php
 
-namespace esas\cmsgate\cache;
+namespace esas\cmsgate\bridge;
 
-use esas\cmsgate\CloudRegistry;
+use esas\cmsgate\BridgeConnector;
 use esas\cmsgate\Registry;
 use esas\cmsgate\utils\StringUtils;
 use PDO;
 
 /**
  * Class OrderCacheRepositoryPDO
- * @package esas\cmsgate\cache
+ * @package esas\cmsgate\bridge
  * create table *_cache
  * (
  * id              varchar(36)  not null,
@@ -63,7 +63,7 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
         $stmt->execute([
             'uuid' => $uuid,
             'config_id' => $configId,
-            'order_data' => CloudRegistry::getRegistry()->getCryptService()->encrypt($orderData),
+            'order_data' => BridgeConnector::fromRegistry()->getCryptService()->encrypt($orderData),
             'order_data_hash' => self::hashData($orderData),
         ]);
         return $uuid;
@@ -100,7 +100,7 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
 
     private function createOrderCacheObject($row)
     {
-        $orderData = CloudRegistry::getRegistry()->getCryptService()->decrypt($row['order_data']);
+        $orderData = BridgeConnector::fromRegistry()->getCryptService()->decrypt($row['order_data']);
         return new OrderCache(
             $row[self::COLUMN_ID],
             $row[self::COLUMN_CONFIG_ID],

@@ -8,11 +8,22 @@
 
 namespace esas\cmsgate;
 
+use esas\cmsgate\security\AuthConfigMapper;
+use esas\cmsgate\utils\CMSGateException;
 use esas\cmsgate\wrappers\OrderWrapper;
 use Exception;
 
-abstract class CmsConnectorCached extends CmsConnector
+abstract class CmsConnectorBridge extends CmsConnector
 {
+    /**
+     * Для удобства работы в IDE и подсветки синтаксиса.
+     * @return $this
+     */
+    public static function fromRegistry()
+    {
+        return Registry::getRegistry()->getCmsConnector();
+    }
+
     public function createCommonConfigForm($managedFields)
     {
         throw new Exception('Not implemented');
@@ -35,7 +46,7 @@ abstract class CmsConnectorCached extends CmsConnector
 
     public function createOrderWrapperForCurrentUser()
     {
-        $cache = CloudRegistry::getRegistry()->getOrderCacheService()->getSessionOrderCacheSafe();
+        $cache = BridgeConnector::fromRegistry()->getOrderCacheService()->getSessionOrderCacheSafe();
         return $this->createOrderWrapperCached($cache);
     }
 
@@ -48,20 +59,22 @@ abstract class CmsConnectorCached extends CmsConnector
 
     public function createOrderWrapperByExtId($extId)
     {
-        return CloudRegistry::getRegistry()->getOrderCacheRepository()->getByExtId($extId);
+        return BridgeConnector::fromRegistry()->getOrderCacheRepository()->getByExtId($extId);
     }
 
     public function createConfigStorage()
     {
-        return new ConfigStorageCloud();
+        return new ConfigStorageBridge();
     }
 
 
     public function createLocaleLoader()
     {
-        $cache = CloudRegistry::getRegistry()->getOrderCacheService()->getSessionOrderCache();
+        $cache = BridgeConnector::fromRegistry()->getOrderCacheService()->getSessionOrderCache();
         return $this->createLocaleLoaderCached($cache);
     }
 
     public abstract function createLocaleLoaderCached($cache);
+
+
 }

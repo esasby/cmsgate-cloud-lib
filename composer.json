@@ -1,11 +1,12 @@
 {
-  "name": "esas/cmsgate-cloud-lib",
-  "description": "CMSGate Cloud integration library",
+  "name": "esas/cmsgate-bridge-lib",
+  "description": "CMSGate Bridge integration library",
   "keywords": [
     "esas",
     "payment gateway",
     "cmsgate",
-    "cloud"
+    "cloud",
+    "bridge"
   ],
   "license": "MIT",
   "authors": [

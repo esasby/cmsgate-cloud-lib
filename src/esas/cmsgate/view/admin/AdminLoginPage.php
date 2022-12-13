@@ -4,14 +4,14 @@
 namespace esas\cmsgate\view\admin;
 
 
-use esas\cmsgate\CloudRegistry;
+use esas\cmsgate\BridgeConnector;
 use esas\cmsgate\Registry;
 use esas\cmsgate\utils\htmlbuilder\Attributes as attribute;
 use esas\cmsgate\utils\htmlbuilder\Elements as element;
 use esas\cmsgate\utils\htmlbuilder\Page;
 use esas\cmsgate\utils\htmlbuilder\presets\CssPreset as css;
 use esas\cmsgate\utils\htmlbuilder\presets\ScriptsPreset as script;
-use esas\cmsgate\view\client\RequestParamsCloud;
+use esas\cmsgate\view\client\RequestParamsBridge;
 
 class AdminLoginPage extends Page
 {
@@ -93,8 +93,8 @@ class AdminLoginPage extends Page
             element::div(
                 attribute::clazz("form-group"),
                 element::input(
-                    attribute::id(RequestParamsCloud::LOGIN_FORM_LOGIN),
-                    attribute::name(RequestParamsCloud::LOGIN_FORM_LOGIN),
+                    attribute::id(RequestParamsBridge::LOGIN_FORM_LOGIN),
+                    attribute::name(RequestParamsBridge::LOGIN_FORM_LOGIN),
                     attribute::clazz("form-control"),
                     attribute::type("text"),
                     attribute::placeholder($this->getLoginPlaceholder()),
@@ -113,8 +113,8 @@ class AdminLoginPage extends Page
             element::div(
                 attribute::clazz("form-group"),
                 element::input(
-                    attribute::id(RequestParamsCloud::LOGIN_FORM_PASSWORD),
-                    attribute::name(RequestParamsCloud::LOGIN_FORM_PASSWORD),
+                    attribute::id(RequestParamsBridge::LOGIN_FORM_PASSWORD),
+                    attribute::name(RequestParamsBridge::LOGIN_FORM_PASSWORD),
                     attribute::clazz("form-control"),
                     attribute::type("password"),
                     attribute::placeholder($this->getPasswordPlaceholder()),

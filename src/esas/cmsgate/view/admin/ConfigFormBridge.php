@@ -16,7 +16,7 @@ use esas\cmsgate\view\admin\fields\ConfigFieldPassword;
 use esas\cmsgate\view\admin\fields\ConfigFieldTextarea;
 use esas\cmsgate\view\admin\fields\ListOption;
 
-class ConfigFormCloud extends ConfigFormHtml
+class ConfigFormBridge extends ConfigFormHtml
 {
     private $orderStatuses;
 

@@ -9,7 +9,7 @@ if (!class_exists("esas\cmsgate\CmsPlugin"))
 class CmsPluginCloud extends CmsPlugin
 {
     /**
-     * @var CloudRegistry
+     * @var BridgeConnector
      */
     private $cloudRegistry;
 
@@ -19,7 +19,7 @@ class CmsPluginCloud extends CmsPlugin
     }
 
     /**
-     * @param CloudRegistry $cloudRegistry
+     * @param BridgeConnector $cloudRegistry
      * @return CmsPlugin
      */
     public function setCloudRegistry($cloudRegistry)

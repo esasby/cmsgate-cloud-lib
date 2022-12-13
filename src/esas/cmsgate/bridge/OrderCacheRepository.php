@@ -1,7 +1,7 @@
 <?php
 
 
-namespace esas\cmsgate\cache;
+namespace esas\cmsgate\bridge;
 
 
 use esas\cmsgate\utils\CMSGateException;

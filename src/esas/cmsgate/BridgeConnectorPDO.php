@@ -4,13 +4,13 @@
 namespace esas\cmsgate;
 
 
-use esas\cmsgate\cache\ConfigCacheRepository;
-use esas\cmsgate\cache\ConfigCacheRepositoryPDO;
-use esas\cmsgate\cache\OrderCacheRepository;
-use esas\cmsgate\cache\OrderCacheRepositoryPDO;
+use esas\cmsgate\bridge\ShopConfigBridgeRepositoryPDO;
+use esas\cmsgate\bridge\ShopConfigRepository;
+use esas\cmsgate\bridge\OrderCacheRepository;
+use esas\cmsgate\bridge\OrderCacheRepositoryPDO;
 use esas\cmsgate\utils\CMSGateException;
 
-abstract class CloudRegistryPDO extends CloudRegistry
+abstract class BridgeConnectorPDO extends BridgeConnector
 {
     /**
      * @return OrderCacheRepository
@@ -21,11 +21,11 @@ abstract class CloudRegistryPDO extends CloudRegistry
     }
 
     /**
-     * @return ConfigCacheRepository
+     * @return ShopConfigRepository
      * @throws CMSGateException
      */
     protected function createConfigCacheRepository() {
-        return new ConfigCacheRepositoryPDO($this->getPDO());
+        return new ShopConfigBridgeRepositoryPDO($this->getPDO());
     }
 
     public abstract function getPDO();

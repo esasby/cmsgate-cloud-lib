@@ -1,15 +1,15 @@
 <?php
 
 
-namespace esas\cmsgate\cache;
+namespace esas\cmsgate\bridge;
 
 
-use esas\cmsgate\CloudRegistry;
+use esas\cmsgate\BridgeConnector;
 
 class OrderCache
 {
     private $uuid;
-    private $configId;
+    private $shopConfigId;
     private $status;
     /**
      * @var array
@@ -26,7 +26,7 @@ class OrderCache
     public function __construct($uuid, $configId, $orderData, $extId, $status)
     {
         $this->uuid = $uuid;
-        $this->configId = $configId;
+        $this->shopConfigId = $configId;
         $this->orderData = $orderData;
         $this->extId = $extId;
         $this->status = $status;
@@ -71,22 +71,22 @@ class OrderCache
     public function setExtId($extId)
     {
         $this->extId = $extId;
-        CloudRegistry::getRegistry()->getOrderCacheRepository()->saveExtId($this->uuid, $this->extId);
+        BridgeConnector::fromRegistry()->getOrderCacheRepository()->saveExtId($this->uuid, $this->extId);
     }
 
     /**
      * @return mixed
      */
-    public function getConfigId()
+    public function getShopConfigId()
     {
-        return $this->configId;
+        return $this->shopConfigId;
     }
 
     /**
-     * @param mixed $configId
+     * @param mixed $shopConfigId
      */
-    public function setConfigId($configId): void
+    public function setShopConfigId($shopConfigId): void
     {
-        $this->configId = $configId;
+        $this->shopConfigId = $shopConfigId;
     }
 }

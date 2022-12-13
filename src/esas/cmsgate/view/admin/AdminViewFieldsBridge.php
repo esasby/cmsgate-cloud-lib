@@ -9,7 +9,7 @@
 namespace esas\cmsgate\view\admin;
 
 
-class AdminViewFieldsCloud
+class AdminViewFieldsBridge
 {
     const API_SECRET = 'api_secret';
 }

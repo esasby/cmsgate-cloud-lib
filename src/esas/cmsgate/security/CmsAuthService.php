@@ -4,14 +4,14 @@
 namespace esas\cmsgate\security;
 
 
-use esas\cmsgate\cache\ConfigCache;
+use esas\cmsgate\bridge\ShopConfig;
 use esas\cmsgate\service\Service;
 
-abstract class ApiAuthService extends Service
+abstract class CmsAuthService extends Service
 {
     /**
      * @param $request
-     * @return ConfigCache
+     * @return ShopConfig
      */
     public abstract function checkAuth(&$request);
 }

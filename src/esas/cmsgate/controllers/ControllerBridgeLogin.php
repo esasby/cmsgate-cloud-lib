@@ -4,46 +4,46 @@
 namespace esas\cmsgate\controllers;
 
 
-use esas\cmsgate\CloudRegistry;
+use esas\cmsgate\BridgeConnector;
 use esas\cmsgate\Registry;
 use esas\cmsgate\security\CryptService;
-use esas\cmsgate\utils\RedirectUtilsCloud;
-use esas\cmsgate\view\admin\CookieCloud;
-use esas\cmsgate\view\client\RequestParamsCloud;
+use esas\cmsgate\utils\RedirectUtilsBridge;
+use esas\cmsgate\view\admin\CookieBridge;
+use esas\cmsgate\view\client\RequestParamsBridge;
 use Exception;
 use Throwable;
 
-class ControllerCloudLogin extends Controller
+class ControllerBridgeLogin extends Controller
 {
     public function process()
     {
         try {
             switch ($_SERVER['REQUEST_METHOD']) {
                 case 'GET':
-                    CloudRegistry::getRegistry()->getAdminLoginPage()->render();
+                    BridgeConnector::fromRegistry()->getAdminLoginPage()->render();
                     break;
                 case 'POST':
                     $this->doLogin();
-                    RedirectUtilsCloud::configPage(true);
+                    RedirectUtilsBridge::configPage(true);
                     break;
             }
         } catch (Throwable $e) {
-            CloudRegistry::getRegistry()->getAdminLoginPage()->render();
+            BridgeConnector::fromRegistry()->getAdminLoginPage()->render();
         } catch (Exception $e) { // для совместимости с php 5
-            CloudRegistry::getRegistry()->getAdminLoginPage()->render();
+            BridgeConnector::fromRegistry()->getAdminLoginPage()->render();
         }
 
     }
 
     private function doLogin() {
-        $login = $_POST[RequestParamsCloud::LOGIN_FORM_LOGIN];
-        $password = $_POST[RequestParamsCloud::LOGIN_FORM_PASSWORD];
+        $login = $_POST[RequestParamsBridge::LOGIN_FORM_LOGIN];
+        $password = $_POST[RequestParamsBridge::LOGIN_FORM_PASSWORD];
         $loggerMainString = "Login[" . $login . "]: ";
         $this->logger->info($loggerMainString . "Controller started");
         try {
-            Registry::getRegistry()->getPaysystemConnector()->checkAuth($login, $password, CloudRegistry::getRegistry()->isSandbox());
+            Registry::getRegistry()->getPaysystemConnector()->checkAuth($login, $password, BridgeConnector::fromRegistry()->isSandbox());
             $hash = md5(CryptService::generateCode(10));
-            $authId = CloudRegistry::getRegistry()->getConfigCacheRepository()->addOrUpdateAuth($login, $password, $hash);
+            $authId = BridgeConnector::fromRegistry()->getShopConfigRepository()->addOrUpdateAuth($login, $password, $hash);
             self::setOrUpdateCookie($authId, $hash);
         } catch (Throwable $e) {
             $this->logger->error($loggerMainString . "Controller exception! ", $e);
@@ -57,7 +57,7 @@ class ControllerCloudLogin extends Controller
     }
 
     public static function setOrUpdateCookie($authId, $hash) {
-        setcookie(CookieCloud::ID, $authId, time() + 60 * 15, "/");
-        setcookie(CookieCloud::HASH, $hash, time() + 60 * 15, "/", null, null, true); // httponly !!!
+        setcookie(CookieBridge::ID, $authId, time() + 60 * 15, "/");
+        setcookie(CookieBridge::HASH, $hash, time() + 60 * 15, "/", null, null, true); // httponly !!!
     }
 }

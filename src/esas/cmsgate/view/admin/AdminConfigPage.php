@@ -4,7 +4,7 @@
 namespace esas\cmsgate\view\admin;
 
 
-use esas\cmsgate\CloudRegistry;
+use esas\cmsgate\BridgeConnector;
 use esas\cmsgate\Registry;
 use esas\cmsgate\utils\htmlbuilder\Attributes as attribute;
 use esas\cmsgate\utils\htmlbuilder\Elements as element;
@@ -12,7 +12,7 @@ use esas\cmsgate\utils\htmlbuilder\presets\ScriptsPreset as script;
 use esas\cmsgate\utils\htmlbuilder\presets\CssPreset as css;
 use esas\cmsgate\utils\htmlbuilder\presets\CommonPreset as common;
 use esas\cmsgate\utils\htmlbuilder\Page;
-use esas\cmsgate\utils\RedirectUtilsCloud;
+use esas\cmsgate\utils\RedirectUtilsBridge;
 use esas\cmsgate\view\admin\fields\ConfigFieldText;
 
 class AdminConfigPage extends Page
@@ -66,7 +66,7 @@ class AdminConfigPage extends Page
                 ),
                 element::a(
                     attribute::clazz("nav-link btn btn-outline-warning my-2 my-sm-0 btn-sm"),
-                    attribute::href(RedirectUtilsCloud::logout()),
+                    attribute::href(RedirectUtilsBridge::logout()),
                     "Logout"
                 )
             ),
@@ -95,14 +95,14 @@ class AdminConfigPage extends Page
     protected function elementSecret()
     {
         $configField = new ConfigFieldText(
-            AdminViewFieldsCloud::API_SECRET,
+            AdminViewFieldsBridge::API_SECRET,
             'API Secret',
             '',
             false,
             null,
             true
         );
-        $configField->setValue(CloudRegistry::getRegistry()->getConfigCacheService()->getSessionConfigCacheSafe()->getSecret());
+        $configField->setValue(BridgeConnector::fromRegistry()->getShopConfigService()->getSessionShopConfigSafe()->getCmsSecret());
         return
             element::div(
                 attribute::clazz("form"),
@@ -110,9 +110,9 @@ class AdminConfigPage extends Page
                     attribute::clazz("card card-default"),
                     element::div(
                         attribute::clazz("card-body"),
-                        ConfigFormCloud::elementFormGroup(
+                        ConfigFormBridge::elementFormGroup(
                             $configField,
-                            ConfigFormCloud::elementInput($configField, "text"),
+                            ConfigFormBridge::elementInput($configField, "text"),
                             element::div(
                                 attribute::clazz('btn-group col col-sm-2 pl-0'),
                                 element::button(
@@ -123,7 +123,7 @@ class AdminConfigPage extends Page
                                     "Copy"
                                 ),
                                 element::a(
-                                    attribute::href(RedirectUtilsCloud::secretGenerate()),
+                                    attribute::href(RedirectUtilsBridge::secretGenerate()),
                                     attribute::clazz("btn btn-secondary"),
                                     "Generate"
                                 ),
@@ -137,7 +137,7 @@ class AdminConfigPage extends Page
     public static function elementTestLabel()
     {
         return
-            CloudRegistry::getRegistry()->isSandbox() ? element::small(
+            BridgeConnector::fromRegistry()->isSandbox() ? element::small(
                 attribute::style('color: #EC9941!important; vertical-align: sub'),
                 'test') : "";
     }

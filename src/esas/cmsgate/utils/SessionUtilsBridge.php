@@ -4,10 +4,10 @@
 namespace esas\cmsgate\utils;
 
 
-use esas\cmsgate\cache\ConfigCache;
-use esas\cmsgate\cache\OrderCache;
+use esas\cmsgate\bridge\ShopConfig;
+use esas\cmsgate\bridge\OrderCache;
 
-class CloudSessionUtils
+class SessionUtilsBridge
 {
     const SESSION_ORDER_CACHE_UUID = 'order_cache_UUID';
 
@@ -32,26 +32,26 @@ class CloudSessionUtils
         $_SESSION[self::SESSION_ORDER_CACHE_OBJECT] = $obj;
     }
 
-    const SESSION_CONFIG_CACHE_UUID = 'config_cache_UUID';
+    const SESSION_SHOP_CONFIG_UUID = 'shop_config_UUID';
 
-    public static function getConfigCacheUUID() {
-        return (isset($_SESSION) && isset($_SESSION[self::SESSION_CONFIG_CACHE_UUID])) ? $_SESSION[self::SESSION_CONFIG_CACHE_UUID] : null;
+    public static function getShopConfigUUID() {
+        return (isset($_SESSION) && isset($_SESSION[self::SESSION_SHOP_CONFIG_UUID])) ? $_SESSION[self::SESSION_SHOP_CONFIG_UUID] : null;
     }
 
     public static function setConfigCacheUUID($uuid) {
-        $_SESSION[self::SESSION_CONFIG_CACHE_UUID] = $uuid;
+        $_SESSION[self::SESSION_SHOP_CONFIG_UUID] = $uuid;
     }
 
-    const SESSION_CONFIG_CACHE_OBJECT = 'config_cache_obj';
+    const SESSION_SHOP_CONFIG_OBJECT = 'shop_config_obj';
 
     /**
-     * @return ConfigCache
+     * @return ShopConfig
      */
-    public static function getConfigCacheObj() {
-        return (isset($_SESSION) && isset($_SESSION[self::SESSION_CONFIG_CACHE_OBJECT])) ?  $_SESSION[self::SESSION_CONFIG_CACHE_OBJECT] : null;
+    public static function getShopConfigObj() {
+        return (isset($_SESSION) && isset($_SESSION[self::SESSION_SHOP_CONFIG_OBJECT])) ?  $_SESSION[self::SESSION_SHOP_CONFIG_OBJECT] : null;
     }
 
-    public static function setConfigCacheObj(ConfigCache $obj) {
-        $_SESSION[self::SESSION_CONFIG_CACHE_OBJECT] = $obj;
+    public static function setShopConfigObj(ShopConfig $obj) {
+        $_SESSION[self::SESSION_SHOP_CONFIG_OBJECT] = $obj;
     }
 }
