@@ -19,7 +19,7 @@
     "php": ">= 5.6.0",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "esas/cmsgate-core": "~v1.17.3",
+    "esas/cmsgate-core": "~v1.17.11",
     "defuse/php-encryption": "2.3.1"
   },
   "autoload": {

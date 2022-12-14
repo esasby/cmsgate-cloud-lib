@@ -29,7 +29,7 @@ abstract class BridgeConnector
      */
     public static function fromRegistry()
     {
-        return Registry::getRegistry()->getService(BRIDGE_CONNECTOR_SERVICE_NAME);
+        return Registry::getRegistry()->getService(self::BRIDGE_CONNECTOR_SERVICE_NAME);
     }
 
     /**
@@ -201,11 +201,4 @@ abstract class BridgeConnector
      */
     protected abstract function createCmsAuthService();
 
-    public function getBridgeUrlReal() {
-        return sprintf('https://cmsgate.esas.by/cmsgate-%s', Registry::getRegistry()->getModuleDescriptor()->getCmsAndPaysystemName('-')); //todo fix
-    }
-
-    public function getBridgeUrlSandbox() {
-        return sprintf('https://test-cmsgate.esas.by/cmsgate-%s', Registry::getRegistry()->getModuleDescriptor()->getCmsAndPaysystemName('-'));
-    }
 }
