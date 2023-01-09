@@ -52,5 +52,24 @@ class ConfigStorageBridge extends ConfigStorageCmsArray
             return parent::getConfig($key);
     }
 
-
+    public function getConstantConfigValue($key) {
+        switch ($key) {
+            case ConfigFields::orderStatusPending():
+            case ConfigFields::orderPaymentStatusPending():
+                return OrderStatusBridge::PENDING;
+            case ConfigFields::orderStatusPayed():
+            case ConfigFields::orderPaymentStatusPayed():
+                return OrderStatusBridge::PAYED;
+            case ConfigFields::orderStatusFailed():
+            case ConfigFields::orderPaymentStatusFailed():
+                return OrderStatusBridge::FAILED;
+            case ConfigFields::orderStatusCanceled():
+            case ConfigFields::orderPaymentStatusCanceled():
+                return OrderStatusBridge::CANCELED;;
+            case ConfigFields::useOrderNumber():
+                return true;
+            default:
+                return null;
+        }
+    }
 }

@@ -5,7 +5,6 @@ namespace esas\cmsgate\bridge;
 
 
 use esas\cmsgate\BridgeConnector;
-use esas\cmsgate\CmsConnectorBridge;
 use esas\cmsgate\service\Service;
 use esas\cmsgate\utils\SessionUtilsBridge;
 use esas\cmsgate\utils\CMSGateException;
@@ -15,6 +14,12 @@ class ShopConfigService extends Service
     public function checkAuthAndLoadConfig(&$request)
     {
         $shopConfig = BridgeConnector::fromRegistry()->getCmsAuthService()->checkAuth($request);
+        SessionUtilsBridge::setShopConfigObj($shopConfig);
+        SessionUtilsBridge::setConfigCacheUUID($shopConfig->getUuid());
+    }
+
+    public function saveConfig($shopConfig) {
+        BridgeConnector::fromRegistry()->getShopConfigRepository()->saveOrUpdate($shopConfig);
         SessionUtilsBridge::setShopConfigObj($shopConfig);
         SessionUtilsBridge::setConfigCacheUUID($shopConfig->getUuid());
     }

@@ -7,6 +7,7 @@ namespace esas\cmsgate\bridge;
 use esas\cmsgate\BridgeConnector;
 use esas\cmsgate\Registry;
 use esas\cmsgate\security\CryptService;
+use esas\cmsgate\utils\CMSGateException;
 use esas\cmsgate\utils\StringUtils;
 use Exception;
 use PDO;
@@ -160,5 +161,9 @@ class ShopConfigBridgeRepositoryPDO extends ShopConfigBridgeRepository
             'id' => $cacheConfigUUID,
             'secret' => BridgeConnector::fromRegistry()->getCryptService()->encrypt($secret),
         ]);
+    }
+
+    public function saveOrUpdate($shopConfig) {
+        throw new CMSGateException('Not implemented');
     }
 }

@@ -16,8 +16,7 @@ abstract class ShopConfigRepository
     /**
      * OrderCacheRepository constructor.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->logger = Logger::getLogger(get_class($this));
 
     }
@@ -27,4 +26,9 @@ abstract class ShopConfigRepository
      * @return ShopConfig
      */
     public abstract function getByUUID($cacheConfigUUID);
+
+    /**
+     * @param $shopConfig ShopConfig
+     */
+    public abstract function saveOrUpdate($shopConfig);
 }
