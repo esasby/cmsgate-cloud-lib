@@ -18,7 +18,7 @@ class ControllerBridgeSecretGenerate extends Controller
     public function process()
     {
         try {
-            (new ControllerBridgeCheckAuth())->process(true);
+            BridgeConnector::fromRegistry()->getMerchantService()->checkAuth(true);
             $this->createNewSecret();
         } catch (Throwable $e) {
             Registry::getRegistry()->getMessenger()->addErrorMessage($e->getMessage());

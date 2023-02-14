@@ -31,4 +31,6 @@ abstract class ShopConfigRepository
      * @param $shopConfig ShopConfig
      */
     public abstract function saveOrUpdate($shopConfig);
+
+    public abstract function saveConfigData($configCacheUUID, $configData);
 }

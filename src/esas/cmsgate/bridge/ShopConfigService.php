@@ -15,13 +15,13 @@ class ShopConfigService extends Service
     {
         $shopConfig = BridgeConnector::fromRegistry()->getCmsAuthService()->checkAuth($request);
         SessionUtilsBridge::setShopConfigObj($shopConfig);
-        SessionUtilsBridge::setConfigCacheUUID($shopConfig->getUuid());
+        SessionUtilsBridge::setShopConfigUUID($shopConfig->getUuid());
     }
 
     public function saveConfig($shopConfig) {
         BridgeConnector::fromRegistry()->getShopConfigRepository()->saveOrUpdate($shopConfig);
         SessionUtilsBridge::setShopConfigObj($shopConfig);
-        SessionUtilsBridge::setConfigCacheUUID($shopConfig->getUuid());
+        SessionUtilsBridge::setShopConfigUUID($shopConfig->getUuid());
     }
 
     /**

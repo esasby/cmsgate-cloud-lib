@@ -24,7 +24,7 @@ abstract class BridgeConnectorPDO extends BridgeConnector
      * @return ShopConfigRepository
      * @throws CMSGateException
      */
-    protected function createConfigCacheRepository() {
+    protected function createShopConfigRepository() {
         return new ShopConfigBridgeRepositoryPDO($this->getPDO());
     }
 

@@ -10,20 +10,6 @@ class ShopConfigBridge extends ShopConfig
     private $cmsSecret;
     private $paysystemLogin;
     private $paysystemPassword;
-    private $configArray;
-
-    /**
-     * @return mixed
-     */
-    public function getConfigArray()
-    {
-        return $this->configArray;
-    }
-
-    public function addToConfigArray($key, $value) {
-        $this->configArray[$key] = $value;
-        return $this;
-    }
 
     /**
      * @return mixed
@@ -39,14 +25,6 @@ class ShopConfigBridge extends ShopConfig
     public function setCmsSecret($cmsSecret)
     {
         $this->cmsSecret = $cmsSecret;
-    }
-
-    /**
-     * @param mixed $configArray
-     */
-    public function setConfigArray($configArray)
-    {
-        $this->configArray = $configArray;
     }
 
     /**

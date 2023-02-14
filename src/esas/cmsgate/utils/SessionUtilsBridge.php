@@ -32,13 +32,23 @@ class SessionUtilsBridge
         $_SESSION[self::SESSION_ORDER_CACHE_OBJECT] = $obj;
     }
 
+    const SESSION_MERCHANT_UUID = 'merchant_UUID';
+
+    public static function getMerchantUUID() {
+        return (isset($_SESSION) && isset($_SESSION[self::SESSION_MERCHANT_UUID])) ? $_SESSION[self::SESSION_MERCHANT_UUID] : null;
+    }
+
+    public static function setMerchantUUID($uuid) {
+        $_SESSION[self::SESSION_MERCHANT_UUID] = $uuid;
+    }
+
     const SESSION_SHOP_CONFIG_UUID = 'shop_config_UUID';
 
     public static function getShopConfigUUID() {
         return (isset($_SESSION) && isset($_SESSION[self::SESSION_SHOP_CONFIG_UUID])) ? $_SESSION[self::SESSION_SHOP_CONFIG_UUID] : null;
     }
 
-    public static function setConfigCacheUUID($uuid) {
+    public static function setShopConfigUUID($uuid) {
         $_SESSION[self::SESSION_SHOP_CONFIG_UUID] = $uuid;
     }
 

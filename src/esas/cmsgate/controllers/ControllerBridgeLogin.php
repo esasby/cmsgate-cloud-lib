@@ -20,44 +20,19 @@ class ControllerBridgeLogin extends Controller
         try {
             switch ($_SERVER['REQUEST_METHOD']) {
                 case 'GET':
-                    BridgeConnector::fromRegistry()->getAdminLoginPage()->render();
+                    BridgeConnector::fromRegistry()->getMerchantService()->getAdminLoginPage()->render();
                     break;
                 case 'POST':
-                    $this->doLogin();
+                    $login = $_POST[RequestParamsBridge::LOGIN_FORM_LOGIN];
+                    $password = $_POST[RequestParamsBridge::LOGIN_FORM_PASSWORD];
+                    BridgeConnector::fromRegistry()->getMerchantService()->doLogin($login, $password);
                     RedirectUtilsBridge::configPage(true);
                     break;
             }
         } catch (Throwable $e) {
-            BridgeConnector::fromRegistry()->getAdminLoginPage()->render();
+            BridgeConnector::fromRegistry()->getMerchantService()->getAdminLoginPage()->render();
         } catch (Exception $e) { // для совместимости с php 5
-            BridgeConnector::fromRegistry()->getAdminLoginPage()->render();
+            BridgeConnector::fromRegistry()->getMerchantService()->getAdminLoginPage()->render();
         }
-
-    }
-
-    private function doLogin() {
-        $login = $_POST[RequestParamsBridge::LOGIN_FORM_LOGIN];
-        $password = $_POST[RequestParamsBridge::LOGIN_FORM_PASSWORD];
-        $loggerMainString = "Login[" . $login . "]: ";
-        $this->logger->info($loggerMainString . "Controller started");
-        try {
-            Registry::getRegistry()->getPaysystemConnector()->checkAuth($login, $password, BridgeConnector::fromRegistry()->isSandbox());
-            $hash = md5(CryptService::generateCode(10));
-            $authId = BridgeConnector::fromRegistry()->getShopConfigRepository()->addOrUpdateAuth($login, $password, $hash);
-            self::setOrUpdateCookie($authId, $hash);
-        } catch (Throwable $e) {
-            $this->logger->error($loggerMainString . "Controller exception! ", $e);
-            Registry::getRegistry()->getMessenger()->addErrorMessage($e->getMessage());
-            throw $e;
-        } catch (Exception $e) { // для совместимости с php 5
-            $this->logger->error($loggerMainString . "Controller exception! ", $e);
-            Registry::getRegistry()->getMessenger()->addErrorMessage($e->getMessage());
-            throw $e;
-        }
-    }
-
-    public static function setOrUpdateCookie($authId, $hash) {
-        setcookie(CookieBridge::ID, $authId, time() + 60 * 15, "/");
-        setcookie(CookieBridge::HASH, $hash, time() + 60 * 15, "/", null, null, true); // httponly !!!
     }
 }

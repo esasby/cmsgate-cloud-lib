@@ -11,9 +11,8 @@ use Throwable;
 
 class ControllerBridgeConfig extends Controller
 {
-    public function process()
-    {
-        (new ControllerBridgeCheckAuth())->process(true);
+    public function process() {
+        BridgeConnector::fromRegistry()->getMerchantService()->checkAuth(true);
         try {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 Registry::getRegistry()->getConfigForm()->validate();
@@ -24,6 +23,6 @@ class ControllerBridgeConfig extends Controller
         } catch (Exception $e) { // для совместимости с php 5
             Registry::getRegistry()->getMessenger()->addErrorMessage($e->getMessage());
         }
-        BridgeConnector::fromRegistry()->getAdminConfigPage()->render();
+        BridgeConnector::fromRegistry()->getMerchantService()->getAdminConfigPage()->render();
     }
 }

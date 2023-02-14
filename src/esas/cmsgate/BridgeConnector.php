@@ -9,6 +9,7 @@
 namespace esas\cmsgate;
 
 
+use esas\cmsgate\bridge\MerchantService;
 use esas\cmsgate\bridge\OrderCacheRepository;
 use esas\cmsgate\bridge\OrderCacheService;
 use esas\cmsgate\security\CmsAuthService;
@@ -17,8 +18,6 @@ use esas\cmsgate\security\CryptServiceImpl;
 use esas\cmsgate\bridge\ShopConfigService;
 use esas\cmsgate\bridge\ShopConfigRepository;
 use esas\cmsgate\utils\CMSGateException;
-use esas\cmsgate\view\admin\AdminConfigPage;
-use esas\cmsgate\view\admin\AdminLoginPage;
 
 abstract class BridgeConnector
 {
@@ -58,16 +57,6 @@ abstract class BridgeConnector
     protected $configCacheService;
 
     /**
-     * @var AdminLoginPage
-     */
-    protected $adminLoginPage;
-
-    /**
-     * @var AdminConfigPage
-     */
-    protected $adminConfigPage;
-
-    /**
      * @return OrderCacheRepository
      */
     public function getOrderCacheRepository() {
@@ -104,7 +93,7 @@ abstract class BridgeConnector
      */
     public function getShopConfigRepository() {
         if ($this->configCacheRepository == null)
-            $this->configCacheRepository = $this->createConfigCacheRepository();
+            $this->configCacheRepository = $this->createShopConfigRepository();
         return $this->configCacheRepository;
     }
 
@@ -112,7 +101,7 @@ abstract class BridgeConnector
      * @return ShopConfigRepository
      * @throws CMSGateException
      */
-    protected abstract function createConfigCacheRepository();
+    protected abstract function createShopConfigRepository();
 
     /**
      * @return CryptService
@@ -154,34 +143,6 @@ abstract class BridgeConnector
     }
 
     /**
-     * @return AdminLoginPage
-     */
-    public function getAdminLoginPage()
-    {
-        if ($this->adminLoginPage != null)
-            return $this->adminLoginPage;
-        else
-            $this->adminLoginPage = $this->createAdminLoginPage();
-        return $this->adminLoginPage;
-    }
-
-    public abstract function createAdminLoginPage();
-
-    /**
-     * @return AdminConfigPage
-     */
-    public function getAdminConfigPage()
-    {
-        if ($this->adminConfigPage != null)
-            return $this->adminConfigPage;
-        else
-            $this->adminConfigPage = $this->createAdminConfigPage();
-        return $this->adminConfigPage;
-    }
-
-    public abstract function createAdminConfigPage();
-
-    /**
      * @var CmsAuthService
      */
     protected $cmsAuthService;
@@ -200,5 +161,26 @@ abstract class BridgeConnector
      * @throws CMSGateException
      */
     protected abstract function createCmsAuthService();
+
+    /**
+     * @var MerchantService
+     */
+    protected $merchantService;
+
+    /**
+     * @return MerchantService
+     * @throws CMSGateException
+     */
+    public function getMerchantService() {
+        if ($this->merchantService == null)
+            $this->merchantService = $this->createMerchantService();
+        return $this->merchantService;
+    }
+
+    /**
+     * @return MerchantService
+     * @throws CMSGateException
+     */
+    protected abstract function createMerchantService();
 
 }

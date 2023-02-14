@@ -24,6 +24,11 @@ abstract class OrderCacheRepository
 
     }
 
+    /**
+     * @param $orderData array
+     * @param $configId
+     * @return mixed
+     */
     public abstract function add($orderData, $configId);
 
     /**

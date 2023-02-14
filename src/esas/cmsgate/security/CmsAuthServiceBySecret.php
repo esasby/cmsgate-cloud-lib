@@ -4,6 +4,7 @@
 namespace esas\cmsgate\security;
 
 
+use esas\cmsgate\bridge\ShopConfigBridgeRepository;
 use esas\cmsgate\BridgeConnector;
 use esas\cmsgate\utils\CMSGateException;
 
@@ -27,7 +28,10 @@ abstract class CmsAuthServiceBySecret extends CmsAuthService
     public function checkAuth(&$request)
     {
         $login = $request[$this->requestFieldLogin];
-        $secret = BridgeConnector::fromRegistry()->getShopConfigRepository()->getSecretByLogin($login);
+
+        /** @var ShopConfigBridgeRepository $shopConfigRepository */
+        $shopConfigRepository = BridgeConnector::fromRegistry()->getShopConfigRepository();
+        $secret = $shopConfigRepository->getSecretByLogin($login);
         $signature = $this->generateVerificationSignature($request, $secret);
         if ($signature !== $request[$this->requestFieldSignature])
             throw new CMSGateException('Signature is incorrect');
