@@ -1,37 +1,34 @@
 <?php
 
 
-namespace esas\cmsgate\utils;
+namespace esas\cmsgate\view;
 
 
-class RedirectUtilsBridge
+use esas\cmsgate\utils\URLUtils;
+
+class RedirectServiceBridge extends RedirectService
 {
     const PATH_CONFIG = '/config';
     const PATH_CONFIG_SECRET_NEW = '/config/secret/new';
     const PATH_CONFIG_LOGIN = '/config/login';
     const PATH_CONFIG_LOGOUT = '/config/logout';
 
-    public static function redirect($location) {
-        header('Location: '. $location);
-        die();
-    }
-
-    public static function loginPage($sendHeader = false) {
+    public function loginPage($sendHeader = false) {
         $location = URLUtils::getCurrentURLMainPart() . self::PATH_CONFIG_LOGIN;
         return $sendHeader ? self::redirect($location) : $location;
     }
 
-    public static function logout($sendHeader = false) {
+    public function logoutPage($sendHeader = false) {
         $location = URLUtils::getCurrentURLMainPart() . self::PATH_CONFIG_LOGOUT;
         return $sendHeader ? self::redirect($location) : $location;
     }
 
-    public static function configPage($sendHeader = false) {
+    public function mainPage($sendHeader = false) {
         $location = URLUtils::getCurrentURLMainPart() . self::PATH_CONFIG;
         return $sendHeader ? self::redirect($location) : $location;
     }
 
-    public static function secretGenerate() {
+    public function secretGenerate() {
         return URLUtils::getCurrentURLMainPart() . self::PATH_CONFIG_SECRET_NEW;
     }
 }

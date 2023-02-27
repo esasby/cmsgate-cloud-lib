@@ -26,7 +26,7 @@ class ControllerBridgeLogin extends Controller
                     $login = $_POST[RequestParamsBridge::LOGIN_FORM_LOGIN];
                     $password = $_POST[RequestParamsBridge::LOGIN_FORM_PASSWORD];
                     BridgeConnector::fromRegistry()->getMerchantService()->doLogin($login, $password);
-                    RedirectUtilsBridge::configPage(true);
+                    BridgeConnector::fromRegistry()->getMerchantService()->getRedirectService()->mainPage(true);
                     break;
             }
         } catch (Throwable $e) {

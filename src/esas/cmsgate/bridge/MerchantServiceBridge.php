@@ -11,7 +11,7 @@ abstract class MerchantServiceBridge extends MerchantService
     public function addOrUpdateAuth($login, $password, $hash) {
         /** @var ShopConfigBridgeRepository $shopConfigRepository */
         $shopConfigRepository = BridgeConnector::fromRegistry()->getShopConfigRepository();
-        $shopConfigRepository->addOrUpdateAuth($login, $password, $hash);
+        return $shopConfigRepository->addOrUpdateAuth($login, $password, $hash);
     }
 
     public function getAuthHashById($id) {

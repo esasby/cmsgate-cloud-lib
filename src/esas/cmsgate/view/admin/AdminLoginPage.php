@@ -71,7 +71,7 @@ class AdminLoginPage extends Page
                     ),
                     element::h4(
                         attribute::clazz("modal-title"),
-                        "Login to " . Registry::getRegistry()->getPaysystemConnector()->getPaySystemConnectorDescriptor()->getPaySystemMachinaName() . AdminConfigPage::elementTestLabel()
+                        $this->loginFormLabel()
                     ),
                     $this->elementLoginInput(),
                     $this->elementPasswordInput(),
@@ -80,6 +80,10 @@ class AdminLoginPage extends Page
                 )
             )
         );
+    }
+
+    public function loginFormLabel() {
+        return "Login to " . Registry::getRegistry()->getPaysystemConnector()->getPaySystemConnectorDescriptor()->getPaySystemMachinaName() . AdminConfigPage::elementTestLabel();
     }
 
     public function attributeLoginFormAction()

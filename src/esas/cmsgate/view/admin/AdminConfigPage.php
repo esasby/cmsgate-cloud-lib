@@ -66,7 +66,7 @@ class AdminConfigPage extends Page
                 ),
                 element::a(
                     attribute::clazz("nav-link btn btn-outline-warning my-2 my-sm-0 btn-sm"),
-                    attribute::href(RedirectUtilsBridge::logout()),
+                    attribute::href(BridgeConnector::fromRegistry()->getMerchantService()->getRedirectService()->logoutPage()),
                     "Logout"
                 )
             ),
@@ -78,7 +78,7 @@ class AdminConfigPage extends Page
                 $this->elementMessages(),
                 $this->elementConfigForms(),
                 element::br()
-            ),
+            )
 //            Registry::getRegistry()->getConfigForm()->generate()
         );
     }
@@ -123,10 +123,10 @@ class AdminConfigPage extends Page
                                     "Copy"
                                 ),
                                 element::a(
-                                    attribute::href(RedirectUtilsBridge::secretGenerate()),
+                                    attribute::href(BridgeConnector::fromRegistry()->getMerchantService()->getRedirectService()->secretGenerate()),
                                     attribute::clazz("btn btn-secondary"),
                                     "Generate"
-                                ),
+                                )
                             )
                         )
                     )

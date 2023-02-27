@@ -25,7 +25,7 @@ class ControllerBridgeSecretGenerate extends Controller
         } catch (Exception $e) { // для совместимости с php 5
             Registry::getRegistry()->getMessenger()->addErrorMessage($e->getMessage());
         }
-        RedirectUtilsBridge::configPage(true);
+        BridgeConnector::fromRegistry()->getMerchantService()->getRedirectService()->mainPage(true);
     }
 
     public function createNewSecret() {

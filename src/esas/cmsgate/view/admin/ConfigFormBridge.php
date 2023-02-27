@@ -4,9 +4,11 @@
 namespace esas\cmsgate\view\admin;
 
 
+use esas\cmsgate\lang\Translator;
 use esas\cmsgate\utils\CMSGateException;
 use esas\cmsgate\utils\htmlbuilder\Attributes as attribute;
 use esas\cmsgate\utils\htmlbuilder\Elements as element;
+use esas\cmsgate\utils\htmlbuilder\presets\BootstrapPreset as bootstrap;
 use esas\cmsgate\utils\UploadedFileWrapper;
 use esas\cmsgate\view\admin\fields\ConfigField;
 use esas\cmsgate\view\admin\fields\ConfigFieldCheckbox;
@@ -20,8 +22,7 @@ class ConfigFormBridge extends ConfigFormHtml
 {
     private $orderStatuses;
 
-    public function __construct($managedFields, $formKey, $submitUrl, $submitButtons)
-    {
+    public function __construct($managedFields, $formKey, $submitUrl, $submitButtons = null) {
         parent::__construct($managedFields, $formKey, $submitUrl, $submitButtons);
         $this->orderStatuses['pending'] = new ListOption('pending', 'Pending');
         $this->orderStatuses['payed'] = new ListOption('payed', 'Payed');
@@ -29,8 +30,36 @@ class ConfigFormBridge extends ConfigFormHtml
         $this->orderStatuses['canceled'] = new ListOption('canceled', 'Canceled');
     }
 
-    public function generate()
-    {
+    protected $footerButtons;
+
+    public function addFooterButton($label, $href, $classAppend = '') {
+        $this->footerButtons .= element::a(
+            attribute::href($href),
+            attribute::clazz('btn me-1 ' . $classAppend),
+            element::content($label)
+        );
+    }
+
+    public function addFooterButtonCancel($redirectHref) {
+        $this->addFooterButton(Translator::fromRegistry()->translate(AdminViewFields::CANCEL), $redirectHref, 'btn-secondary');
+    }
+
+    public function addFooterButtonDelete($redirectHref) {
+        $this->addFooterButton(Translator::fromRegistry()->translate(AdminViewFields::DELETE), $redirectHref, 'btn-secondary');
+    }
+
+    protected $hiddenInput;
+
+    public function addHiddenInput($key, $value) {
+        $this->hiddenInput .= element::input(
+            attribute::name($key),
+            attribute::type('hidden'),
+            attribute::id($key),
+            attribute::value($value)
+        );
+    }
+
+    public function generate() {
         return
             element::form(
                 ($this->getSubmitUrl() != null ? attribute::action($this->getSubmitUrl()) : ""),
@@ -42,33 +71,23 @@ class ConfigFormBridge extends ConfigFormHtml
 
     }
 
-    protected function elementConfigPanel()
-    {
-        return element::div(
-            attribute::clazz("card card-default"),
-            element::div(
-                attribute::clazz("card-header"),
-                $this->getHeadingTitle(),
-            ),
-            element::div(
-                attribute::clazz("card-body"),
+    protected function elementConfigPanel() {
+        return bootstrap::elementCard(
+            bootstrap::elementCardHeader($this->getHeadingTitle()),
+            bootstrap::elementCardBody(
+                $this->hiddenInput,
                 parent::generate()
             ),
-            element::div(
-                attribute::clazz("card-footer"),
-                element::div(
-                    attribute::clazz("row"),
-                    element::div(
-                        attribute::clazz("col col-sm-12 d-flex justify-content-end"),
-                        $this->elementSubmitButtons()
-                    )
+            bootstrap::elementCardFooter(
+                bootstrap::elementCardFooterButtons(
+                    $this->elementSubmitButtons(),
+                    $this->footerButtons
                 )
             )
         );
     }
 
-    protected function elementInputSubmit($name, $value)
-    {
+    protected function elementInputSubmit($name, $value) {
         return
             element::input(
                 attribute::clazz("btn btn-secondary"),
@@ -79,8 +98,7 @@ class ConfigFormBridge extends ConfigFormHtml
     }
 
     public static function elementFormGroup(ConfigField $configField, $input, ...$extraElements) {
-        return element::div(
-            attribute::clazz("form-group row"),
+        return bootstrap::formGroup(
             self::elementLabel($configField),
             element::div(
                 attribute::clazz("col"),
@@ -102,8 +120,7 @@ class ConfigFormBridge extends ConfigFormHtml
             );
     }
 
-    function generateTextField(ConfigField $configField)
-    {
+    function generateTextField(ConfigField $configField) {
         return
             self::elementFormGroup(
                 $configField,
@@ -111,8 +128,7 @@ class ConfigFormBridge extends ConfigFormHtml
             );
     }
 
-    public function generatePasswordField(ConfigFieldPassword $configField)
-    {
+    public function generatePasswordField(ConfigFieldPassword $configField) {
         return
             self::elementFormGroup(
                 $configField,
@@ -120,13 +136,13 @@ class ConfigFormBridge extends ConfigFormHtml
             );
     }
 
-    public function generateTextAreaField(ConfigFieldTextarea $configField)
-    {
+    public function generateTextAreaField(ConfigFieldTextarea $configField) {
         return
             self::elementFormGroup(
                 $configField,
                 element::textarea(
-                    attribute::rows("12"),
+                    $configField->getCols() != null ? attribute::cols($configField->getCols()) : "",
+                    attribute::rows($configField->getRows()),
                     attribute::clazz("form-control "),
                     attribute::type("textarea"),
                     attribute::name($configField->getKey()),
@@ -137,23 +153,21 @@ class ConfigFormBridge extends ConfigFormHtml
     }
 
 
-    public function generateFileField(ConfigFieldFile $configField)
-    {
+    public function generateFileField(ConfigFieldFile $configField) {
         throw new CMSGateException("Not implemented");
     }
 
-    private function getFileColor($fileName)
-    {
+    private function getFileColor($fileName) {
         $file = new UploadedFileWrapper($fileName);
         return $file->isExists() ? "green" : "red";
     }
 
-    public function generateCheckboxField(ConfigFieldCheckbox $configField)
-    {
+    public function generateCheckboxField(ConfigFieldCheckbox $configField) {
         return
             self::elementFormGroup(
                 $configField,
                 element::input(
+                    bootstrap::isBootstrapV5() ? attribute::clazz('form-check-input') : "",
                     attribute::type("checkbox"),
                     attribute::name($configField->getKey()),
                     attribute::value("yes"),
@@ -162,8 +176,7 @@ class ConfigFormBridge extends ConfigFormHtml
             );
     }
 
-    public function generateListField(ConfigFieldList $configField)
-    {
+    public function generateListField(ConfigFieldList $configField) {
         return
             self::elementFormGroup(
                 $configField,
@@ -177,8 +190,7 @@ class ConfigFormBridge extends ConfigFormHtml
     }
 
 
-    public static function elementLabel(ConfigField $configField)
-    {
+    public static function elementLabel(ConfigField $configField) {
         return
             element::label(
                 attribute::forr($configField->getKey()),
@@ -195,8 +207,7 @@ class ConfigFormBridge extends ConfigFormHtml
             );
     }
 
-    public static function elementInput(ConfigField $configField, $type)
-    {
+    public static function elementInput(ConfigField $configField, $type) {
         return
             element::input(
                 attribute::clazz("form-control " . ($configField->isValid() ? "" : "border-danger")),
@@ -209,8 +220,7 @@ class ConfigFormBridge extends ConfigFormHtml
             );
     }
 
-    public static function elementValidationError(ConfigField $configField)
-    {
+    public static function elementValidationError(ConfigField $configField) {
         $validationResult = $configField->getValidationResult();
         if ($validationResult != null && !$validationResult->isValid())
             return
@@ -228,8 +238,7 @@ class ConfigFormBridge extends ConfigFormHtml
     /**
      * @return ListOption[]
      */
-    public function createStatusListOptions()
-    {
+    public function createStatusListOptions() {
         return $this->orderStatuses;
     }
 }

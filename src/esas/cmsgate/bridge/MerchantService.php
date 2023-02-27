@@ -9,11 +9,12 @@ use esas\cmsgate\Registry;
 use esas\cmsgate\security\CryptService;
 use esas\cmsgate\service\Service;
 use esas\cmsgate\utils\CMSGateException;
-use esas\cmsgate\utils\RedirectUtilsBridge;
 use esas\cmsgate\utils\SessionUtilsBridge;
 use esas\cmsgate\view\admin\AdminConfigPage;
 use esas\cmsgate\view\admin\AdminLoginPage;
 use esas\cmsgate\view\admin\CookieBridge;
+use esas\cmsgate\view\RedirectService;
+use esas\cmsgate\view\RedirectServiceBridge;
 use Exception;
 use Throwable;
 
@@ -56,7 +57,7 @@ abstract class MerchantService extends Service
             if ($redirectToLogin) {
                 $this->logger->error("Controller exception! ", $e);
                 Registry::getRegistry()->getMessenger()->addErrorMessage($e->getClientMsg());
-                RedirectUtilsBridge::loginPage(true);
+                $this->getRedirectService()->loginPage(true);
             }
             throw $e;
         }
@@ -115,4 +116,23 @@ abstract class MerchantService extends Service
 
     public abstract function createAdminConfigPage();
 
+    /**
+     * @var RedirectService
+     */
+    protected $redirectService;
+
+    /**
+     * @return RedirectService
+     */
+    public function getRedirectService() {
+        if ($this->redirectService != null)
+            return $this->redirectService;
+        else
+            $this->redirectService = $this->createRedirectService();
+        return $this->redirectService;
+    }
+
+    public function createRedirectService() {
+        return new RedirectServiceBridge();
+    }
 }
