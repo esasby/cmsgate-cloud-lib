@@ -19,6 +19,15 @@ class OrderCacheService extends Service
         SessionUtilsBridge::setOrderCacheUUID($orderCache->getUuid());
     }
 
+    public function loadSessionOrderCacheById($id) {
+        $orderCache = BridgeConnector::fromRegistry()->getOrderCacheRepository()->getByID($id);
+        if ($orderCache == null)
+            throw new CMSGateException('Unknown order id [' . $id . "]");
+        SessionUtilsBridge::setOrderCacheObj($orderCache);
+        SessionUtilsBridge::setOrderCacheUUID($orderCache->getUuid());
+        SessionUtilsBridge::setShopConfigUUID($orderCache->getShopConfigId());
+    }
+
     public function addSessionOrderCache($orderData) {
         if ($orderData == null || empty($orderData))
             throw new CMSGateException('Incorrect request');
@@ -43,7 +52,7 @@ class OrderCacheService extends Service
         $cacheUUID = SessionUtilsBridge::getOrderCacheUUID();
         if ($cacheUUID == null || $cacheUUID === '')
             return null;
-        $cache = BridgeConnector::fromRegistry()->getOrderCacheRepository()->getByUUID($cacheUUID);
+        $cache = BridgeConnector::fromRegistry()->getOrderCacheRepository()->getByID($cacheUUID);
         SessionUtilsBridge::setOrderCacheObj($cache);
         return $cache;
     }

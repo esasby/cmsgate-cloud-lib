@@ -6,6 +6,7 @@ namespace esas\cmsgate\utils;
 
 use esas\cmsgate\bridge\ShopConfig;
 use esas\cmsgate\bridge\OrderCache;
+use esas\cmsgate\bridge\Merchant;
 
 class SessionUtilsBridge
 {
@@ -63,5 +64,18 @@ class SessionUtilsBridge
 
     public static function setShopConfigObj(ShopConfig $obj) {
         $_SESSION[self::SESSION_SHOP_CONFIG_OBJECT] = $obj;
+    }
+
+    const SESSION_MERCHANT_OBJECT = 'shop_merchant_obj';
+
+    /**
+     * @return Merchant
+     */
+    public static function getMerchantObj() {
+        return (isset($_SESSION) && isset($_SESSION[self::SESSION_MERCHANT_OBJECT])) ?  $_SESSION[self::SESSION_MERCHANT_OBJECT] : null;
+    }
+
+    public static function setMerchantObj($obj) {
+        $_SESSION[self::SESSION_MERCHANT_OBJECT] = $obj;
     }
 }

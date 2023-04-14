@@ -112,7 +112,7 @@ class ShopConfigBridgeRepositoryPDO extends ShopConfigBridgeRepository
         return $authHash;
     }
 
-    public function getByUUID($cacheConfigUUID)
+    public function getById($cacheConfigUUID)
     {
         $sql = "select * from $this->tableName where id = :id";
         $stmt = $this->pdo->prepare($sql);

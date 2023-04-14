@@ -7,6 +7,8 @@ namespace esas\cmsgate\controllers;
 use esas\cmsgate\BridgeConnector;
 use esas\cmsgate\Registry;
 use esas\cmsgate\security\CryptService;
+use esas\cmsgate\utils\htmlbuilder\hro\HROFactory;
+use esas\cmsgate\utils\htmlbuilder\hro\HROFactoryCmsGate;
 use esas\cmsgate\utils\RedirectUtilsBridge;
 use esas\cmsgate\view\admin\CookieBridge;
 use esas\cmsgate\view\client\RequestParamsBridge;
@@ -20,7 +22,7 @@ class ControllerBridgeLogin extends Controller
         try {
             switch ($_SERVER['REQUEST_METHOD']) {
                 case 'GET':
-                    BridgeConnector::fromRegistry()->getMerchantService()->getAdminLoginPage()->render();
+                    HROFactoryCmsGate::fromRegistry()->createAdminLoginPageBuilder()->render();
                     break;
                 case 'POST':
                     $login = $_POST[RequestParamsBridge::LOGIN_FORM_LOGIN];
@@ -30,9 +32,9 @@ class ControllerBridgeLogin extends Controller
                     break;
             }
         } catch (Throwable $e) {
-            BridgeConnector::fromRegistry()->getMerchantService()->getAdminLoginPage()->render();
+            HROFactoryCmsGate::fromRegistry()->createAdminLoginPageBuilder()->render();
         } catch (Exception $e) { // для совместимости с php 5
-            BridgeConnector::fromRegistry()->getMerchantService()->getAdminLoginPage()->render();
+            HROFactoryCmsGate::fromRegistry()->createAdminLoginPageBuilder()->render();
         }
     }
 }

@@ -12,8 +12,6 @@ abstract class OrderWrapperCached extends OrderSafeWrapper
      * @var OrderCache
      */
     protected $orderCache;
-    protected $products;
-
     /**
      * @param $order
      */

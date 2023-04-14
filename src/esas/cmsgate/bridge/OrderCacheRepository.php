@@ -32,10 +32,19 @@ abstract class OrderCacheRepository
     public abstract function add($orderData, $configId);
 
     /**
+     * @deprecated
      * @param $uuid string
      * @return OrderCache
      */
-    public abstract function getByUUID($cacheUUID);
+    public function getByUUID($cacheUUID) {
+        return $this->getByID($cacheUUID);
+    }
+
+    /**
+     * @param $orderId string
+     * @return OrderCache
+     */
+    public abstract function getByID($orderId);
 
     /**
      * @param $extId string
@@ -48,6 +57,12 @@ abstract class OrderCacheRepository
      * @return OrderCache
      */
     public abstract function getByData($orderData);
+
+    /**
+     * @param $shopConfigId
+     * @return OrderCache[]
+     */
+    public abstract function getByShopConfigId($shopConfigId);
 
     public abstract function saveExtId($cacheUUID, $extId);
 

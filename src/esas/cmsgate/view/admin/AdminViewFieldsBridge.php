@@ -11,5 +11,6 @@ namespace esas\cmsgate\view\admin;
 
 class AdminViewFieldsBridge
 {
+    const SHOP_CONFIG_EDIT_FORM = 'shop_config_edit_form';
     const API_SECRET = 'api_secret';
 }

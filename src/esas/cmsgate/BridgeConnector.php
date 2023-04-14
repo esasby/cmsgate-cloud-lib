@@ -9,6 +9,8 @@
 namespace esas\cmsgate;
 
 
+use esas\cmsgate\bridge\MerchantRepository;
+use esas\cmsgate\bridge\MerchantRepositoryPDO;
 use esas\cmsgate\bridge\MerchantService;
 use esas\cmsgate\bridge\OrderCacheRepository;
 use esas\cmsgate\bridge\OrderCacheService;
@@ -183,4 +185,19 @@ abstract class BridgeConnector
      */
     protected abstract function createMerchantService();
 
+    /**
+     * @var MerchantRepository
+     */
+    protected $buyNowMerchantRepository;
+
+    /**
+     * @return MerchantRepository
+     */
+    public function getMerchantRepository() {
+        if ($this->buyNowMerchantRepository == null)
+            $this->buyNowMerchantRepository = $this->createMerchantRepository();
+        return $this->buyNowMerchantRepository;
+    }
+
+    protected abstract function createMerchantRepository();
 }

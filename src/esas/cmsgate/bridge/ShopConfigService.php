@@ -40,7 +40,7 @@ class ShopConfigService extends Service
                 return null;
             $shopConfigId = $orderCache->getShopConfigId();
         }
-        $shopConfig = BridgeConnector::fromRegistry()->getShopConfigRepository()->getByUUID($shopConfigId);
+        $shopConfig = BridgeConnector::fromRegistry()->getShopConfigRepository()->getById($shopConfigId);
         SessionUtilsBridge::setShopConfigObj($shopConfig);
         return $shopConfig;
     }

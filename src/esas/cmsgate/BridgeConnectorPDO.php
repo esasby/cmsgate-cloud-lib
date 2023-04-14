@@ -4,6 +4,7 @@
 namespace esas\cmsgate;
 
 
+use esas\cmsgate\bridge\MerchantRepositoryPDO;
 use esas\cmsgate\bridge\ShopConfigBridgeRepositoryPDO;
 use esas\cmsgate\bridge\ShopConfigRepository;
 use esas\cmsgate\bridge\OrderCacheRepository;
@@ -26,6 +27,13 @@ abstract class BridgeConnectorPDO extends BridgeConnector
      */
     protected function createShopConfigRepository() {
         return new ShopConfigBridgeRepositoryPDO($this->getPDO());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function createMerchantRepository() {
+        return new MerchantRepositoryPDO($this->getPDO());
     }
 
     public abstract function getPDO();

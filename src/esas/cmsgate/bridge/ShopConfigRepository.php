@@ -22,10 +22,19 @@ abstract class ShopConfigRepository
     }
 
     /**
+     * @deprecated
      * @param $cacheConfigUUID
      * @return ShopConfig
      */
-    public abstract function getByUUID($cacheConfigUUID);
+    public function getByUUID($cacheConfigUUID) {
+        return $this->getById($cacheConfigUUID);
+    }
+
+    /**
+     * @param $shopConfigId
+     * @return ShopConfig
+     */
+    public abstract function getById($shopConfigId);
 
     /**
      * @param $shopConfig ShopConfig

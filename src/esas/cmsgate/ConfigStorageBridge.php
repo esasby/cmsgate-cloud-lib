@@ -34,9 +34,9 @@ class ConfigStorageBridge extends ConfigStorageCmsArray
         $orderCache = BridgeConnector::fromRegistry()->getOrderCacheService()->getSessionOrderCache();
         $this->shopConfig = BridgeConnector::fromRegistry()->getShopConfigService()->getSessionShopConfig(); // часть настроек может храниться в bridgeDB
         $configArray = array();
-        if ($orderCache != null)
+        if ($orderCache != null && is_array($orderCache->getOrderData()))
             $configArray = array_merge($configArray, $orderCache->getOrderData());
-        if ($this->shopConfig != null)
+        if ($this->shopConfig != null && is_array($this->shopConfig->getConfigArray()))
             $configArray = array_merge($configArray, $this->shopConfig->getConfigArray());
         return $configArray;
     }

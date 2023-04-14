@@ -6,24 +6,57 @@ namespace esas\cmsgate\bridge;
 
 class ShopConfig
 {
-    private $uuid;
-
+    private $id;
+    private $merchantId;
     private $configArray;
 
     /**
+     * @deprecated
      * @return mixed
      */
     public function getUuid()
     {
-        return $this->uuid;
+        return $this->getId();
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @deprecated
+     * @param mixed $uuid
+     * @return ShopConfig
+     */
+    public function setUuid($uuid)
+    {
+        return $this->setId($uuid);
     }
 
     /**
      * @param mixed $uuid
+     * @return ShopConfig
      */
-    public function setUuid($uuid)
+    public function setId($id)
     {
-        $this->uuid = $uuid;
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMerchantId() {
+        return $this->merchantId;
+    }
+
+    /**
+     * @param mixed $merchantId
+     * @return ShopConfig
+     */
+    public function setMerchantId($merchantId) {
+        $this->merchantId = $merchantId;
         return $this;
     }
 
