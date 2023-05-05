@@ -25,14 +25,13 @@ use esas\cmsgate\utils\CMSGateException;
 
 abstract class BridgeConnector
 {
-    const BRIDGE_CONNECTOR_SERVICE_NAME = 'BridgeConnector';
     /**
      * Для удобства работы в IDE и подсветки синтаксиса.
      * @return $this
      */
     public static function fromRegistry()
     {
-        return Registry::getRegistry()->getService(self::BRIDGE_CONNECTOR_SERVICE_NAME);
+        return Registry::getRegistry()->getService(BridgeConnector::class);
     }
 
     /**
