@@ -1,13 +1,14 @@
 <?php
 namespace esas\cmsgate\bridge\dao;
 
-use esas\cmsgate\bridge\BridgeConnector;
+use esas\cmsgate\bridge\security\CryptService;
 use esas\cmsgate\Registry;
+use esas\cmsgate\service\PDOService;
 use esas\cmsgate\utils\StringUtils;
 use PDO;
 
 /**
- * Class OrderCacheRepositoryPDO
+ * Class OrderRepositoryPDO
  * @package esas\cmsgate\bridge
  * create table *_cache
  * (
@@ -23,7 +24,7 @@ use PDO;
  * unique (id)
  * );
  */
-class OrderCacheRepositoryPDO extends OrderCacheRepository
+class OrderRepositoryPDO extends OrderRepository
 {
     /**
      * @var PDO
@@ -37,48 +38,52 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
     const COLUMN_EXT_ID = 'ext_id';
     const COLUMN_STATUS = 'status';
     const COLUMN_CREATED_AT = 'created_at';
+    const COLUMN_ORDER_DATA = 'order_data';
+    const COLUMN_ORDER_DATA_HASH = 'order_data_hash';
 
-    public function __construct($pdo, $tableName = null)
+    public function __construct($tableName = null)
     {
         parent::__construct();
-        $this->pdo = $pdo;
-        if ($tableName != null)
-            $this->tableName = $tableName;
-        else
+        $this->tableName = $tableName;
+    }
+
+    public function postConstruct() {
+        $this->pdo = PDOService::fromRegistry()->getPDO(OrderRepository::class);
+        if ($this->tableName == null)
             $this->tableName = Registry::getRegistry()->getModuleDescriptor()->getCmsAndPaysystemName()
                 . '_order_cache';
     }
 
     /**
-     * @param $orderData OrderCache
+     * @param $order Order
      * @param $configId
      * @return string
      */
-    public function add($orderData, $configId)
+    public function add($order)
     {
         $uuid = StringUtils::guidv4();
         $sql = "INSERT INTO $this->tableName (id, config_id, created_at, order_data, order_data_hash, status) VALUES (:id, :config_id, CURRENT_TIMESTAMP, :order_data, :order_data_hash, 'new')";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
-            'id' => $uuid,
-            'config_id' => $configId,
-            'order_data' => $this->encodeOrderData($orderData),
-            'order_data_hash' => self::hashData($orderData),
+            self::COLUMN_ID => $uuid,
+            self::COLUMN_CONFIG_ID => $order->getShopConfigId(),
+            self::COLUMN_ORDER_DATA => $this->encodeOrderData($order->getOrderData()),
+            self::COLUMN_ORDER_DATA_HASH => self::hashData($order->getOrderData()),
         ]);
         return $uuid;
     }
 
     protected function encodeOrderData($orderData) {
         $orderData = json_encode($orderData);
-        return BridgeConnector::fromRegistry()->getCryptService()->encrypt($orderData);
+        return CryptService::fromRegistry()->encrypt($orderData);
     }
 
     protected function decodeOrderData($orderData) {
-        $orderData = BridgeConnector::fromRegistry()->getCryptService()->decrypt($orderData);
+        $orderData = CryptService::fromRegistry()->decrypt($orderData);
         return json_decode($orderData, true);
     }
 
-    private static function hashData($data)
+    protected static function hashData($data)
     {
         return hash('md5', $data);
     }
@@ -92,7 +97,7 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
         ]);
         $cache = null;
         while ($row = $stmt->fetch(PDO::FETCH_LAZY)) {
-            $cache = $this->createOrderCacheObject($row);
+            $cache = $this->createOrderObject($row);
         }
         return $cache;
     }
@@ -107,9 +112,9 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
         ]);
     }
 
-    private function createOrderCacheObject($row)
+    protected function createOrderObject($row)
     {
-        $order = new OrderCache();
+        $order = new Order();
         $order
             ->setId($row[self::COLUMN_ID])
             ->setShopConfigId($row[self::COLUMN_CONFIG_ID])
@@ -129,7 +134,7 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
         ]);
         $cache = null;
         while ($row = $stmt->fetch(PDO::FETCH_LAZY)) {
-            $cache = $this->createOrderCacheObject($row);
+            $cache = $this->createOrderObject($row);
         }
         return $cache;
     }
@@ -144,7 +149,7 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
         ]);
         $cache = null;
         while ($row = $stmt->fetch(PDO::FETCH_LAZY)) {
-            $cache = $this->createOrderCacheObject($row);
+            $cache = $this->createOrderObject($row);
         }
         return $cache;
     }
@@ -167,7 +172,7 @@ class OrderCacheRepositoryPDO extends OrderCacheRepository
         ]);
         $orders = array();
         while ($row = $stmt->fetch(PDO::FETCH_LAZY)) {
-            $orders[] =  $this->createOrderCacheObject($row);
+            $orders[] =  $this->createOrderObject($row);
         }
         return $orders;
     }

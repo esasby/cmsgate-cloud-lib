@@ -1,20 +1,20 @@
 <?php
 namespace esas\cmsgate\bridge\service;
 
-use esas\cmsgate\bridge\BridgeConnector;
 use esas\cmsgate\bridge\dao\ShopConfigBridgeRepository;
+use esas\cmsgate\bridge\dao\ShopConfigRepository;
 
-abstract class MerchantServiceBridge extends MerchantService
+class MerchantServiceBridge extends MerchantService
 {
     public function addOrUpdateAuth($login, $password, $hash) {
         /** @var ShopConfigBridgeRepository $shopConfigRepository */
-        $shopConfigRepository = BridgeConnector::fromRegistry()->getShopConfigRepository();
+        $shopConfigRepository = ShopConfigRepository::fromRegistry();
         return $shopConfigRepository->addOrUpdateAuth($login, $password, $hash);
     }
 
     public function getAuthHashById($id) {
         /** @var ShopConfigBridgeRepository $shopConfigRepository */
-        $shopConfigRepository = BridgeConnector::fromRegistry()->getShopConfigRepository();
+        $shopConfigRepository = ShopConfigRepository::fromRegistry();
         return $shopConfigRepository->getAuthHashById($id);
     }
 }

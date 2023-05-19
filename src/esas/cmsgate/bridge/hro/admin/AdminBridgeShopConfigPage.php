@@ -4,9 +4,8 @@
 namespace esas\cmsgate\bridge\hro\admin;
 
 
-use esas\cmsgate\bridge\BridgeConnector;
 use esas\cmsgate\bridge\service\RedirectServiceBridge;
-use esas\cmsgate\bridge\service\RedirectServiceBridgeImpl;
+use esas\cmsgate\bridge\service\ShopConfigService;
 use esas\cmsgate\bridge\view\admin\AdminViewFieldsBridge;
 use esas\cmsgate\hro\forms\FormHROFactory;
 use esas\cmsgate\hro\panels\CopyToClipboardPanelHROFactory;
@@ -57,7 +56,7 @@ class AdminBridgeShopConfigPage extends AdminBridgePage implements StorableFormP
     public function elementConfigForms() {
         $form = FormHROFactory::findBuilder()
             ->setId(AdminViewFieldsBridge::SHOP_CONFIG_EDIT_FORM)
-            ->setAction(RedirectServiceBridgeImpl::fromRegistry()->shopConfig())
+            ->setAction(RedirectServiceBridge::fromRegistry()->shopConfig())
             ->setManagedFields($this->managedFields)
             ->addButtonSave();
         return $form->build();
@@ -66,9 +65,9 @@ class AdminBridgeShopConfigPage extends AdminBridgePage implements StorableFormP
     protected function elementSecretPanel() {
         return CopyToClipboardPanelHROFactory::findBuilder()
             ->setLabelId(AdminViewFieldsBridge::API_SECRET)
-            ->setValue(BridgeConnector::fromRegistry()->getShopConfigService()->getSessionShopConfigSafe()->getCmsSecret())
+            ->setValue(ShopConfigService::fromRegistry()->getSessionShopConfigSafe()->getCmsSecret())
             ->addButton(element::a(
-                attribute::href(BridgeConnector::fromRegistry()->getMerchantService()->getRedirectService()->secretGenerate()),
+                attribute::href(RedirectServiceBridge::fromRegistry()->secretGenerate()),
                 attribute::clazz("btn btn-secondary"),
                 "Generate"))
             ->build();

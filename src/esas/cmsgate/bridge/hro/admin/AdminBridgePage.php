@@ -3,10 +3,8 @@
 
 namespace esas\cmsgate\bridge\hro\admin;
 
-
-use esas\cmsgate\bridge\BridgeConnector;
+use esas\cmsgate\bridge\properties\PropertiesBridge;
 use esas\cmsgate\bridge\service\RedirectServiceBridge;
-use esas\cmsgate\bridge\service\RedirectServiceBridgeImpl;
 use esas\cmsgate\hro\pages\PageHRO;
 use esas\cmsgate\lang\Translator;
 use esas\cmsgate\Registry;
@@ -60,8 +58,8 @@ abstract class AdminBridgePage extends PageHRO implements DisplayErrorPage
                         attribute::clazz("collapse navbar-collapse"),
                         attribute::id("navbarCollapse"),
                         bootstrap::elementNavBarList(
-                            bootstrap::elementNavBarListItem("#", "Configuration", $this->getNavItemId() == RedirectServiceBridgeImpl::PATH_CONFIG),
-                            bootstrap::elementNavBarListItem("#", "Orders", $this->getNavItemId() == RedirectServiceBridgeImpl::PATH_ORDERS)
+                            bootstrap::elementNavBarListItem("#", "Configuration", $this->getNavItemId() == RedirectServiceBridge::PATH_CONFIG),
+                            bootstrap::elementNavBarListItem("#", "Orders", $this->getNavItemId() == RedirectServiceBridge::PATH_ORDERS)
                         )
                     ),
                     element::a(
@@ -92,7 +90,7 @@ abstract class AdminBridgePage extends PageHRO implements DisplayErrorPage
 
     public static function elementTestLabel() {
         return
-            BridgeConnector::fromRegistry()->isSandbox() ? element::small(
+            PropertiesBridge::fromRegistry()->isSandbox() ? element::small(
                 attribute::style('color: #EC9941!important; vertical-align: sub'),
                 'test') : "";
     }

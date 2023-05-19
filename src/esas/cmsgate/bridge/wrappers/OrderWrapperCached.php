@@ -2,24 +2,24 @@
 
 namespace esas\cmsgate\bridge\wrappers;
 
-use esas\cmsgate\bridge\BridgeConnector;
-use esas\cmsgate\bridge\dao\OrderCache;
+use esas\cmsgate\bridge\dao\Order;
+use esas\cmsgate\bridge\dao\OrderRepository;
 use esas\cmsgate\OrderStatus;
 use esas\cmsgate\wrappers\OrderSafeWrapper;
 
 abstract class OrderWrapperCached extends OrderSafeWrapper
 {
     /**
-     * @var OrderCache
+     * @var Order
      */
-    protected $orderCache;
+    protected $order;
     /**
      * @param $order
      */
-    public function __construct($orderCache)
+    public function __construct($order)
     {
         parent::__construct();
-        $this->orderCache = $orderCache;
+        $this->order = $order;
     }
 
     /**
@@ -29,8 +29,8 @@ abstract class OrderWrapperCached extends OrderSafeWrapper
     public function getStatusUnsafe()
     {
         return new OrderStatus(
-            $this->orderCache->getStatus(),
-            $this->orderCache->getStatus());
+            $this->order->getStatus(),
+            $this->order->getStatus());
     }
 
     /**
@@ -40,7 +40,7 @@ abstract class OrderWrapperCached extends OrderSafeWrapper
      */
     public function updateStatus($newOrderStatus)
     {
-        BridgeConnector::fromRegistry()->getOrderCacheRepository()->setStatus($this->orderCache->getUuid(), $newOrderStatus->getOrderStatus());
+        OrderRepository::fromRegistry()->setStatus($this->order->getId(), $newOrderStatus->getOrderStatus());
     }
 
     /**
@@ -49,7 +49,7 @@ abstract class OrderWrapperCached extends OrderSafeWrapper
      */
     public function getExtIdUnsafe()
     {
-        return $this->orderCache->getExtId();
+        return $this->order->getExtId();
     }
 
     /**
@@ -58,6 +58,6 @@ abstract class OrderWrapperCached extends OrderSafeWrapper
      */
     public function saveExtId($extId)
     {
-        $this->orderCache->setExtId($extId);
+        $this->order->setExtId($extId);
     }
 }

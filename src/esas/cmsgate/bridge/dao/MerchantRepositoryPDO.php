@@ -1,8 +1,10 @@
 <?php
+
 namespace esas\cmsgate\bridge\dao;
 
-use esas\cmsgate\bridge\BridgeConnector;
+use esas\cmsgate\bridge\security\CryptService;
 use esas\cmsgate\Registry;
+use esas\cmsgate\service\PDOService;
 use esas\cmsgate\utils\StringUtils;
 use PDO;
 
@@ -20,13 +22,14 @@ class MerchantRepositoryPDO extends MerchantRepository
     const COLUMN_AUTH_HASH = 'auth_hash';
 
 
-    public function __construct($pdo, $tableName = null)
-    {
+    public function __construct($tableName = null) {
         parent::__construct();
-        $this->pdo = $pdo;
-        if ($tableName != null)
-            $this->tableName = $tableName;
-        else
+        $this->tableName = $tableName;
+    }
+
+    public function postConstruct() {
+        $this->pdo = PDOService::fromRegistry()->getPDO(MerchantRepository::class);
+        if ($this->tableName == null)
             $this->tableName = Registry::getRegistry()->getModuleDescriptor()->getCmsAndPaysystemName()
                 . '_merchant';
     }
@@ -43,7 +46,7 @@ class MerchantRepositoryPDO extends MerchantRepository
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
                 'id' => $uuid,
-                'password' => BridgeConnector::fromRegistry()->getCryptService()->encrypt($password),
+                'password' => CryptService::fromRegistry()->encrypt($password),
                 'auth_hash' => $hash,
             ]);
             return $uuid;
@@ -54,7 +57,7 @@ class MerchantRepositoryPDO extends MerchantRepository
         $stmt->execute([
             'id' => $uuid,
             'login' => $login,
-            'password' => BridgeConnector::fromRegistry()->getCryptService()->encrypt($password),
+            'password' => CryptService::fromRegistry()->encrypt($password),
             'auth_hash' => $hash
         ]);
         return $uuid;
@@ -81,7 +84,7 @@ class MerchantRepositoryPDO extends MerchantRepository
         ]);
         $configCache = null;
         while ($row = $stmt->fetch(PDO::FETCH_LAZY)) {
-            $configCache =  $this->createMerchantObject($row);
+            $configCache = $this->createMerchantObject($row);
         }
         return $configCache;
     }
@@ -90,7 +93,7 @@ class MerchantRepositoryPDO extends MerchantRepository
         $merchant = new Merchant();
         $merchant->setId($row[self::COLUMN_ID]);
         $merchant->setLogin($row[self::COLUMN_LOGIN]);
-        $merchant->setPassword(BridgeConnector::fromRegistry()->getCryptService()->decrypt($row[self::COLUMN_PASSWORD]));
+        $merchant->setPassword(CryptService::fromRegistry()->decrypt($row[self::COLUMN_PASSWORD]));
         return $merchant;
     }
 }

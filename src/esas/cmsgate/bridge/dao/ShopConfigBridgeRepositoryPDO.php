@@ -1,9 +1,9 @@
 <?php
 namespace esas\cmsgate\bridge\dao;
 
-use esas\cmsgate\bridge\BridgeConnector;
 use esas\cmsgate\bridge\security\CryptService;
 use esas\cmsgate\Registry;
+use esas\cmsgate\service\PDOService;
 use esas\cmsgate\utils\CMSGateException;
 use esas\cmsgate\utils\StringUtils;
 use Exception;
@@ -25,13 +25,15 @@ class ShopConfigBridgeRepositoryPDO extends ShopConfigBridgeRepository
     const COLUMN_SECRET = 'secret';
     const COLUMN_CONFIG_DATA = 'config_data';
 
-    public function __construct($pdo, $tableName = null)
+    public function __construct($tableName = null)
     {
         parent::__construct();
-        $this->pdo = $pdo;
-        if ($tableName != null)
             $this->tableName = $tableName;
-        else
+    }
+
+    public function postConstruct() {
+        $this->pdo = PDOService::fromRegistry()->getPDO(ShopConfigBridgeRepository::class);
+        if ($this->tableName == null)
             $this->tableName = Registry::getRegistry()->getModuleDescriptor()->getCmsAndPaysystemName()
                 . '_config_cache';
     }
@@ -45,7 +47,7 @@ class ShopConfigBridgeRepositoryPDO extends ShopConfigBridgeRepository
         ]);
         $secret = null;
         while ($row = $stmt->fetch(PDO::FETCH_LAZY)) {
-            $secret = BridgeConnector::fromRegistry()->getCryptService()->decrypt($row[self::COLUMN_SECRET]);
+            $secret = CryptService::fromRegistry()->decrypt($row[self::COLUMN_SECRET]);
         }
         return $secret;
     }
@@ -77,7 +79,7 @@ class ShopConfigBridgeRepositoryPDO extends ShopConfigBridgeRepository
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
                 'id' => $uuid,
-                'password' => BridgeConnector::fromRegistry()->getCryptService()->encrypt($password),
+                'password' => CryptService::fromRegistry()->encrypt($password),
                 'auth_hash' => $hash,
             ]);
             return $uuid;
@@ -88,9 +90,9 @@ class ShopConfigBridgeRepositoryPDO extends ShopConfigBridgeRepository
         $stmt->execute([
             'id' => $uuid,
             'login' => $login,
-            'password' => BridgeConnector::fromRegistry()->getCryptService()->encrypt($password),
+            'password' => CryptService::fromRegistry()->encrypt($password),
             'auth_hash' => $hash,
-            'secret' => BridgeConnector::fromRegistry()->getCryptService()->encrypt(CryptService::generateCode(8)),
+            'secret' => CryptService::fromRegistry()->encrypt(CryptService::generateCode(8)),
         ]);
         return $uuid;
     }
@@ -126,7 +128,7 @@ class ShopConfigBridgeRepositoryPDO extends ShopConfigBridgeRepository
     private function createShopConfigObject($row) {
         $configCache = new ShopConfigBridge();
         try {
-            $configCache->setConfigArray(json_decode(BridgeConnector::fromRegistry()->getCryptService()->decrypt($row[self::COLUMN_CONFIG_DATA]), true));
+            $configCache->setConfigArray(json_decode(CryptService::fromRegistry()->decrypt($row[self::COLUMN_CONFIG_DATA]), true));
         } catch (Throwable $e) {
             $configCache->setConfigArray(array()); // new config
         } catch (Exception $e) {
@@ -134,8 +136,8 @@ class ShopConfigBridgeRepositoryPDO extends ShopConfigBridgeRepository
         }
         $configCache->setUuid($row[self::COLUMN_ID]);
         $configCache->setPaysystemLogin($row[self::COLUMN_LOGIN]);
-        $configCache->setCmsSecret(BridgeConnector::fromRegistry()->getCryptService()->decrypt($row[self::COLUMN_SECRET]));
-        $configCache->setPaysystemPassword(BridgeConnector::fromRegistry()->getCryptService()->decrypt($row[self::COLUMN_PASSWORD]));
+        $configCache->setCmsSecret(CryptService::fromRegistry()->decrypt($row[self::COLUMN_SECRET]));
+        $configCache->setPaysystemPassword(CryptService::fromRegistry()->decrypt($row[self::COLUMN_PASSWORD]));
         return $configCache;
     }
 
@@ -146,7 +148,7 @@ class ShopConfigBridgeRepositoryPDO extends ShopConfigBridgeRepository
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             'id' => $configCacheUUID,
-            self::COLUMN_CONFIG_DATA => BridgeConnector::fromRegistry()->getCryptService()->encrypt($configData)
+            self::COLUMN_CONFIG_DATA => CryptService::fromRegistry()->encrypt($configData)
         ]);
     }
 
@@ -156,7 +158,7 @@ class ShopConfigBridgeRepositoryPDO extends ShopConfigBridgeRepository
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             'id' => $cacheConfigUUID,
-            'secret' => BridgeConnector::fromRegistry()->getCryptService()->encrypt($secret),
+            'secret' => CryptService::fromRegistry()->encrypt($secret),
         ]);
     }
 

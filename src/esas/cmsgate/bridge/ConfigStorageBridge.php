@@ -10,7 +10,11 @@ namespace esas\cmsgate\bridge;
 
 use esas\cmsgate\bridge\dao\OrderStatusBridge;
 use esas\cmsgate\bridge\dao\ShopConfigBridge;
+use esas\cmsgate\bridge\dao\ShopConfigRepository;
+use esas\cmsgate\bridge\properties\PropertiesBridge;
+use esas\cmsgate\bridge\service\OrderService;
 use esas\cmsgate\bridge\service\SessionServiceBridge;
+use esas\cmsgate\bridge\service\ShopConfigService;
 use esas\cmsgate\ConfigFields;
 use esas\cmsgate\ConfigStorageCmsArray;
 
@@ -28,17 +32,17 @@ class ConfigStorageBridge extends ConfigStorageCmsArray
 
     public function saveConfigs($keyValueArray)
     {
-        BridgeConnector::fromRegistry()->getShopConfigRepository()->saveConfigData(SessionServiceBridge::fromRegistry()::getShopConfigUUID(), $keyValueArray);
+        ShopConfigRepository::fromRegistry()->saveConfigData(SessionServiceBridge::fromRegistry()->getShopConfigUUID(), $keyValueArray);
         $this->configArray = $keyValueArray;
     }
 
     protected function mergeConfigFromCache()
     {
-        $orderCache = BridgeConnector::fromRegistry()->getOrderCacheService()->getSessionOrderCache();
-        $this->shopConfig = BridgeConnector::fromRegistry()->getShopConfigService()->getSessionShopConfig(); // часть настроек может храниться в bridgeDB
+        $order = OrderService::fromRegistry()->getSessionOrder();
+        $this->shopConfig = ShopConfigService::fromRegistry()->getSessionShopConfig(); // часть настроек может храниться в bridgeDB
         $configArray = array();
-        if ($orderCache != null && is_array($orderCache->getOrderData()))
-            $configArray = array_merge($configArray, $orderCache->getOrderData());
+        if ($order != null && is_array($order->getOrderData()))
+            $configArray = array_merge($configArray, $order->getOrderData());
         if ($this->shopConfig != null && is_array($this->shopConfig->getConfigArray()))
             $configArray = array_merge($configArray, $this->shopConfig->getConfigArray());
         return $configArray;
@@ -50,7 +54,7 @@ class ConfigStorageBridge extends ConfigStorageCmsArray
             $this->configArray = $this->mergeConfigFromCache();
         }
         if ($key == ConfigFields::sandbox()) {
-            return BridgeConnector::fromRegistry()->isSandbox();
+            return PropertiesBridge::fromRegistry()->isSandbox();
         } else
             return parent::getConfig($key);
     }

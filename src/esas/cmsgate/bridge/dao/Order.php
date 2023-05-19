@@ -1,10 +1,7 @@
 <?php
 namespace esas\cmsgate\bridge\dao;
 
-
-use esas\cmsgate\bridge\BridgeConnector;
-
-class OrderCache
+class Order
 {
     private $id;
     private $shopConfigId;
@@ -32,7 +29,7 @@ class OrderCache
 
     /**
      * @param mixed $id
-     * @return OrderCache
+     * @return Order
      */
     public function setId($id) {
         $this->id = $id;
@@ -48,7 +45,7 @@ class OrderCache
 
     /**
      * @param mixed $shopConfigId
-     * @return OrderCache
+     * @return Order
      */
     public function setShopConfigId($shopConfigId) {
         $this->shopConfigId = $shopConfigId;
@@ -64,7 +61,7 @@ class OrderCache
 
     /**
      * @param mixed $status
-     * @return OrderCache
+     * @return Order
      */
     public function setStatus($status) {
         $this->status = $status;
@@ -79,8 +76,8 @@ class OrderCache
     }
 
     /**
-     * @param array $orderData
-     * @return OrderCache
+     * @param $orderData mixed
+     * @return Order
      */
     public function setOrderData($orderData) {
         $this->orderData = $orderData;
@@ -96,7 +93,7 @@ class OrderCache
 
     /**
      * @param mixed $createdAt
-     * @return OrderCache
+     * @return Order
      */
     public function setCreatedAt($createdAt) {
         $this->createdAt = $createdAt;
@@ -112,12 +109,12 @@ class OrderCache
 
     /**
      * @param mixed $extId
-     * @return OrderCache
+     * @return Order
      */
     public function setExtId($extId)
     {
         $this->extId = $extId;
-        BridgeConnector::fromRegistry()->getOrderCacheRepository()->saveExtId($this->id, $this->extId);
+        OrderRepository::fromRegistry()->saveExtId($this->id, $this->extId);
         return $this;
     }
 }

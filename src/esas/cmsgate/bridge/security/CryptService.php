@@ -1,8 +1,18 @@
 <?php
 namespace esas\cmsgate\bridge\security;
 
-abstract class CryptService
+use esas\cmsgate\Registry;
+use esas\cmsgate\service\Service;
+
+abstract class CryptService extends Service
 {
+    /**
+     * @inheritDoc
+     */
+    public static function fromRegistry() {
+        return Registry::getRegistry()->getService(CryptService::class, new CryptServiceImpl());
+    }
+
     public abstract function encrypt($data);
 
     public abstract function decrypt($data);

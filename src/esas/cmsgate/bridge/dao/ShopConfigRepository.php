@@ -1,21 +1,16 @@
 <?php
 namespace esas\cmsgate\bridge\dao;
 
-use esas\cmsgate\utils\Logger;
+use esas\cmsgate\dao\Repository;
+use esas\cmsgate\Registry;
 
-abstract class ShopConfigRepository
+abstract class ShopConfigRepository extends Repository
 {
     /**
-     * @var Logger
+     * @inheritDoc
      */
-    protected $logger;
-
-    /**
-     * OrderCacheRepository constructor.
-     */
-    public function __construct() {
-        $this->logger = Logger::getLogger(get_class($this));
-
+    public static function fromRegistry() {
+        return Registry::getRegistry()->getService(ShopConfigRepository::class);
     }
 
     /**

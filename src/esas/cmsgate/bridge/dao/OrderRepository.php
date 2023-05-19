@@ -1,35 +1,28 @@
 <?php
 namespace esas\cmsgate\bridge\dao;
 
-use esas\cmsgate\utils\Logger;
+use esas\cmsgate\dao\Repository;
+use esas\cmsgate\Registry;
 
-abstract class OrderCacheRepository
+abstract class OrderRepository extends Repository
 {
     /**
-     * @var Logger
+     * @inheritDoc
      */
-    protected $logger;
-
-    /**
-     * OrderCacheRepository constructor.
-     */
-    public function __construct()
-    {
-        $this->logger = Logger::getLogger(get_class($this));
-
+    public static function fromRegistry() {
+        return Registry::getRegistry()->getService(OrderRepository::class);
     }
 
     /**
-     * @param $orderData array
-     * @param $configId
+     * @param $order Order
      * @return mixed
      */
-    public abstract function add($orderData, $configId);
+    public abstract function add($order);
 
     /**
-     * @deprecated
      * @param $uuid string
-     * @return OrderCache
+     * @return Order
+     *@deprecated
      */
     public function getByUUID($cacheUUID) {
         return $this->getByID($cacheUUID);
@@ -37,25 +30,25 @@ abstract class OrderCacheRepository
 
     /**
      * @param $orderId string
-     * @return OrderCache
+     * @return Order
      */
     public abstract function getByID($orderId);
 
     /**
      * @param $extId string
-     * @return OrderCache
+     * @return Order
      */
     public abstract function getByExtId($extId);
 
     /**
      * @param $orderData
-     * @return OrderCache
+     * @return Order
      */
     public abstract function getByData($orderData);
 
     /**
      * @param $shopConfigId
-     * @return OrderCache[]
+     * @return Order[]
      */
     public abstract function getByShopConfigId($shopConfigId);
 

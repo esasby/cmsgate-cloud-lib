@@ -4,8 +4,10 @@
 namespace esas\cmsgate\bridge\controllers;
 
 
-use esas\cmsgate\bridge\BridgeConnector;
+use esas\cmsgate\bridge\dao\ShopConfigRepository;
 use esas\cmsgate\bridge\security\CryptService;
+use esas\cmsgate\bridge\service\MerchantService;
+use esas\cmsgate\bridge\service\RedirectServiceBridge;
 use esas\cmsgate\bridge\service\SessionServiceBridge;
 use esas\cmsgate\controllers\Controller;
 use esas\cmsgate\Registry;
@@ -18,22 +20,22 @@ class ControllerBridgeSecretGenerate extends Controller
     public function process()
     {
         try {
-            BridgeConnector::fromRegistry()->getMerchantService()->checkAuth(true);
+            MerchantService::fromRegistry()->checkAuth(true);
             $this->createNewSecret();
         } catch (Throwable $e) {
             Registry::getRegistry()->getMessenger()->addErrorMessage($e->getMessage());
         } catch (Exception $e) { // для совместимости с php 5
             Registry::getRegistry()->getMessenger()->addErrorMessage($e->getMessage());
         }
-        BridgeConnector::fromRegistry()->getMerchantService()->getRedirectService()->mainPage(true);
+        RedirectServiceBridge::fromRegistry()->mainPage(true);
     }
 
     public function createNewSecret() {
-        $cacheUUID = SessionServiceBridge::fromRegistry()::getShopConfigUUID();
+        $cacheUUID = SessionServiceBridge::fromRegistry()->getShopConfigUUID();
         if ($cacheUUID == null || $cacheUUID === '')
             throw new CMSGateException("Can not load ConfigCache from session");
         $newSecret = CryptService::generateCode(8);
-        BridgeConnector::fromRegistry()->getShopConfigRepository()->saveSecret($cacheUUID, $newSecret);
+        ShopConfigRepository::fromRegistry()->saveSecret($cacheUUID, $newSecret);
     }
 
 }

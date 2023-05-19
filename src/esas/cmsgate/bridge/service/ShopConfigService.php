@@ -1,24 +1,36 @@
 <?php
 namespace esas\cmsgate\bridge\service;
 
-use esas\cmsgate\bridge\BridgeConnector;
 use esas\cmsgate\bridge\dao\ShopConfig;
+use esas\cmsgate\bridge\dao\ShopConfigRepository;
+use esas\cmsgate\bridge\security\CmsAuthService;
+use esas\cmsgate\Registry;
 use esas\cmsgate\service\Service;
 use esas\cmsgate\utils\CMSGateException;
 
 class ShopConfigService extends Service
 {
-    public function checkAuthAndLoadConfig(&$request)
-    {
-        $shopConfig = BridgeConnector::fromRegistry()->getCmsAuthService()->checkAuth($request);
-        SessionServiceBridge::fromRegistry()::setShopConfigObj($shopConfig);
-        SessionServiceBridge::fromRegistry()::setShopConfigUUID($shopConfig->getUuid());
+    /**
+     * @return $this
+     */
+    public static function fromRegistry() {
+        return Registry::getRegistry()->getService(ShopConfigService::class, new ShopConfigService());
     }
 
+    public function checkAuthAndLoadConfig(&$request)
+    {
+        $shopConfig = CmsAuthService::fromRegistry()->checkAuth($request);
+        SessionServiceBridge::fromRegistry()->setShopConfigObj($shopConfig);
+        SessionServiceBridge::fromRegistry()->setShopConfigUUID($shopConfig->getId());
+    }
+
+    /**
+     * @param $shopConfig ShopConfig
+     */
     public function saveConfig($shopConfig) {
-        BridgeConnector::fromRegistry()->getShopConfigRepository()->saveOrUpdate($shopConfig);
-        SessionServiceBridge::fromRegistry()::setShopConfigObj($shopConfig);
-        SessionServiceBridge::fromRegistry()::setShopConfigUUID($shopConfig->getUuid());
+        ShopConfigRepository::fromRegistry()->saveOrUpdate($shopConfig);
+        SessionServiceBridge::fromRegistry()->setShopConfigObj($shopConfig);
+        SessionServiceBridge::fromRegistry()->setShopConfigUUID($shopConfig->getId());
     }
 
     /**
@@ -27,18 +39,18 @@ class ShopConfigService extends Service
      */
     public function getSessionShopConfig()
     {
-        $shopConfig = SessionServiceBridge::fromRegistry()::getShopConfigObj();
+        $shopConfig = SessionServiceBridge::fromRegistry()->getShopConfigObj();
         if ($shopConfig != null)
             return $shopConfig;
-        $shopConfigId = SessionServiceBridge::fromRegistry()::getShopConfigUUID();
+        $shopConfigId = SessionServiceBridge::fromRegistry()->getShopConfigUUID();
         if ($shopConfigId == null || $shopConfigId === '') {
-            $orderCache = BridgeConnector::fromRegistry()->getOrderCacheService()->getSessionOrderCache();
-            if ($orderCache == null)
+            $order = OrderService::fromRegistry()->getSessionOrder();
+            if ($order == null)
                 return null;
-            $shopConfigId = $orderCache->getShopConfigId();
+            $shopConfigId = $order->getShopConfigId();
         }
-        $shopConfig = BridgeConnector::fromRegistry()->getShopConfigRepository()->getById($shopConfigId);
-        SessionServiceBridge::fromRegistry()::setShopConfigObj($shopConfig);
+        $shopConfig = ShopConfigRepository::fromRegistry()->getById($shopConfigId);
+        SessionServiceBridge::fromRegistry()->setShopConfigObj($shopConfig);
         return $shopConfig;
     }
 

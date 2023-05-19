@@ -1,8 +1,9 @@
 <?php
 namespace esas\cmsgate\bridge\service;
 
-use esas\cmsgate\bridge\BridgeConnector;
 use esas\cmsgate\bridge\dao\Merchant;
+use esas\cmsgate\bridge\dao\MerchantRepository;
+use esas\cmsgate\bridge\properties\PropertiesBridge;
 use esas\cmsgate\bridge\security\CryptService;
 use esas\cmsgate\bridge\view\admin\CookieBridge;
 use esas\cmsgate\Registry;
@@ -13,11 +14,18 @@ use Throwable;
 
 abstract class MerchantService extends Service
 {
+    /**
+     * @inheritDoc
+     */
+    public static function fromRegistry() {
+        return Registry::getRegistry()->getService(MerchantService::class);
+    }
+
     public function doLogin($login, $password) {
         $loggerMainString = "Login[" . $login . "]: ";
         $this->logger->info($loggerMainString . " service started");
         try {
-            Registry::getRegistry()->getPaysystemConnector()->checkAuth($login, $password, BridgeConnector::fromRegistry()->isSandbox());
+            Registry::getRegistry()->getPaysystemConnector()->checkAuth($login, $password, PropertiesBridge::fromRegistry()->isSandbox());
             $hash = md5(CryptService::generateCode(10));
             $authId = $this->addOrUpdateAuth($login, $password, $hash);
             self::setOrUpdateCookie($authId, $hash);
@@ -43,14 +51,14 @@ abstract class MerchantService extends Service
                 throw new CMSGateException('Cookies hash is incorrect', 'Access denied. Please log in');
             }
             self::setOrUpdateCookie($_COOKIE[CookieBridge::ID], $_COOKIE[CookieBridge::HASH]);
-            SessionServiceBridge::fromRegistry()::setMerchantUUID($_COOKIE[CookieBridge::ID]);
+            SessionServiceBridge::fromRegistry()->setMerchantUUID($_COOKIE[CookieBridge::ID]);
             if ($this->isSingleShopConfigMode())
-                SessionServiceBridge::fromRegistry()::setShopConfigUUID($_COOKIE[CookieBridge::ID]);
+                SessionServiceBridge::fromRegistry()->setShopConfigUUID($_COOKIE[CookieBridge::ID]);
         } catch (CMSGateException $e) {
             if ($redirectToLogin) {
                 $this->logger->error("Controller exception! ", $e);
                 Registry::getRegistry()->getMessenger()->addErrorMessage($e->getClientMsg());
-                $this->getRedirectService()->loginPage(true);
+                RedirectServiceBridge::fromRegistry()->loginPage(true);
             }
             throw $e;
         }
@@ -66,14 +74,14 @@ abstract class MerchantService extends Service
      * @throws CMSGateException
      */
     public function getMerchantObj() {
-        $merchant = SessionServiceBridge::fromRegistry()::getMerchantObj();
+        $merchant = SessionServiceBridge::fromRegistry()->getMerchantObj();
         if ($merchant != null)
             return $merchant;
-        $shopConfig = SessionServiceBridge::fromRegistry()::getShopConfigObj();
+        $shopConfig = SessionServiceBridge::fromRegistry()->getShopConfigObj();
         if ($shopConfig == null)
             return null;
-        $merchant = BridgeConnector::fromRegistry()->getMerchantRepository()->getById($shopConfig->getMerchantId());
-        SessionServiceBridge::fromRegistry()::setMerchantObj($merchant);
+        $merchant = MerchantRepository::fromRegistry()->getById($shopConfig->getMerchantId());
+        SessionServiceBridge::fromRegistry()->setMerchantObj($merchant);
         return $merchant;
     }
 
@@ -89,23 +97,4 @@ abstract class MerchantService extends Service
 
     public abstract function getAuthHashById($id);
 
-    /**
-     * @var RedirectServiceBridge
-     */
-    protected $redirectService;
-
-    /**
-     * @return RedirectServiceBridge
-     */
-    public function getRedirectService() {
-        if ($this->redirectService != null)
-            return $this->redirectService;
-        else
-            $this->redirectService = $this->createRedirectService();
-        return $this->redirectService;
-    }
-
-    public function createRedirectService() {
-        return new RedirectServiceBridgeImpl();
-    }
 }

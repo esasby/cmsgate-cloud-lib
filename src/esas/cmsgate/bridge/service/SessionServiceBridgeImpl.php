@@ -5,51 +5,51 @@ namespace esas\cmsgate\bridge\service;
 
 
 use esas\cmsgate\bridge\dao\Merchant;
-use esas\cmsgate\bridge\dao\OrderCache;
+use esas\cmsgate\bridge\dao\Order;
 use esas\cmsgate\bridge\dao\ShopConfig;
 
 class SessionServiceBridgeImpl extends SessionServiceBridge
 {
     const SESSION_ORDER_CACHE_UUID = 'order_cache_UUID';
 
-    public static function getOrderCacheUUID() {
+    public function getOrderUUID() {
         return (isset($_SESSION) && isset($_SESSION[self::SESSION_ORDER_CACHE_UUID])) ? $_SESSION[self::SESSION_ORDER_CACHE_UUID] : null;
     }
 
-    public static function setOrderCacheUUID($uuid) {
+    public function setOrderUUID($uuid) {
         $_SESSION[self::SESSION_ORDER_CACHE_UUID] = $uuid;
     }
 
     const SESSION_ORDER_CACHE_OBJECT = 'order_cache_obj';
 
     /**
-     * @return OrderCache
+     * @return Order
      */
-    public static function getOrderCacheObj() {
+    public function getOrderObj() {
         return (isset($_SESSION) && isset($_SESSION[self::SESSION_ORDER_CACHE_OBJECT]))  ? $_SESSION[self::SESSION_ORDER_CACHE_OBJECT] : null;
     }
 
-    public static function setOrderCacheObj($obj) {
+    public function setOrderObj($obj) {
         $_SESSION[self::SESSION_ORDER_CACHE_OBJECT] = $obj;
     }
 
     const SESSION_MERCHANT_UUID = 'merchant_UUID';
 
-    public static function getMerchantUUID() {
+    public function getMerchantUUID() {
         return (isset($_SESSION) && isset($_SESSION[self::SESSION_MERCHANT_UUID])) ? $_SESSION[self::SESSION_MERCHANT_UUID] : null;
     }
 
-    public static function setMerchantUUID($uuid) {
+    public function setMerchantUUID($uuid) {
         $_SESSION[self::SESSION_MERCHANT_UUID] = $uuid;
     }
 
     const SESSION_SHOP_CONFIG_UUID = 'shop_config_UUID';
 
-    public static function getShopConfigUUID() {
+    public function getShopConfigUUID() {
         return (isset($_SESSION) && isset($_SESSION[self::SESSION_SHOP_CONFIG_UUID])) ? $_SESSION[self::SESSION_SHOP_CONFIG_UUID] : null;
     }
 
-    public static function setShopConfigUUID($uuid) {
+    public function setShopConfigUUID($uuid) {
         $_SESSION[self::SESSION_SHOP_CONFIG_UUID] = $uuid;
     }
 
@@ -58,11 +58,11 @@ class SessionServiceBridgeImpl extends SessionServiceBridge
     /**
      * @return ShopConfig
      */
-    public static function getShopConfigObj() {
+    public function getShopConfigObj() {
         return (isset($_SESSION) && isset($_SESSION[self::SESSION_SHOP_CONFIG_OBJECT])) ?  $_SESSION[self::SESSION_SHOP_CONFIG_OBJECT] : null;
     }
 
-    public static function setShopConfigObj(ShopConfig $obj) {
+    public function setShopConfigObj(ShopConfig $obj) {
         $_SESSION[self::SESSION_SHOP_CONFIG_OBJECT] = $obj;
     }
 
@@ -71,11 +71,11 @@ class SessionServiceBridgeImpl extends SessionServiceBridge
     /**
      * @return Merchant
      */
-    public static function getMerchantObj() {
+    public function getMerchantObj() {
         return (isset($_SESSION) && isset($_SESSION[self::SESSION_MERCHANT_OBJECT])) ?  $_SESSION[self::SESSION_MERCHANT_OBJECT] : null;
     }
 
-    public static function setMerchantObj($obj) {
+    public function setMerchantObj($obj) {
         $_SESSION[self::SESSION_MERCHANT_OBJECT] = $obj;
     }
 }

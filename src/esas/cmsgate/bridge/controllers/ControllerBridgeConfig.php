@@ -1,8 +1,8 @@
 <?php
 namespace esas\cmsgate\bridge\controllers;
 
-use esas\cmsgate\bridge\BridgeConnector;
 use esas\cmsgate\bridge\hro\admin\AdminBridgeShopConfigPage;
+use esas\cmsgate\bridge\service\MerchantService;
 use esas\cmsgate\controllers\Controller;
 use esas\cmsgate\Registry;
 use esas\cmsgate\utils\htmlbuilder\page\PageUtils;
@@ -13,7 +13,7 @@ use Throwable;
 class ControllerBridgeConfig extends Controller
 {
     public function process() {
-        BridgeConnector::fromRegistry()->getMerchantService()->checkAuth(true);
+        MerchantService::fromRegistry()->checkAuth(true);
         $shopConfigViewPage = new AdminBridgeShopConfigPage();
         try {
             if (RequestUtils::isMethodPost()) {

@@ -8,6 +8,8 @@
 
 namespace esas\cmsgate\bridge;
 
+use esas\cmsgate\bridge\dao\OrderRepository;
+use esas\cmsgate\bridge\service\OrderService;
 use esas\cmsgate\CmsConnector;
 use esas\cmsgate\Registry;
 use esas\cmsgate\wrappers\OrderWrapper;
@@ -46,7 +48,7 @@ abstract class CmsConnectorBridge extends CmsConnector
 
     public function createOrderWrapperForCurrentUser()
     {
-        $cache = BridgeConnector::fromRegistry()->getOrderCacheService()->getSessionOrderCacheSafe();
+        $cache = OrderService::fromRegistry()->getSessionOrderSafe();
         return $this->createOrderWrapperCached($cache);
     }
 
@@ -59,7 +61,7 @@ abstract class CmsConnectorBridge extends CmsConnector
 
     public function createOrderWrapperByExtId($extId)
     {
-        return BridgeConnector::fromRegistry()->getOrderCacheRepository()->getByExtId($extId);
+        return OrderRepository::fromRegistry()->getByExtId($extId);
     }
 
     public function createConfigStorage()
@@ -70,7 +72,7 @@ abstract class CmsConnectorBridge extends CmsConnector
 
     public function createLocaleLoader()
     {
-        $cache = BridgeConnector::fromRegistry()->getOrderCacheService()->getSessionOrderCache();
+        $cache = OrderService::fromRegistry()->getSessionOrder();
         return $this->createLocaleLoaderCached($cache);
     }
 

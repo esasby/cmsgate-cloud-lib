@@ -3,51 +3,51 @@
 
 namespace esas\cmsgate\bridge\service;
 
-
-use esas\cmsgate\bridge\BridgeConnector;
 use esas\cmsgate\bridge\dao\Merchant;
-use esas\cmsgate\bridge\dao\OrderCache;
+use esas\cmsgate\bridge\dao\Order;
 use esas\cmsgate\bridge\dao\ShopConfig;
+use esas\cmsgate\Registry;
+use esas\cmsgate\service\Service;
 
-abstract class SessionServiceBridge
+abstract class SessionServiceBridge extends Service
 {
     /**
      * @return $this
      */
     public static function fromRegistry() {
-        return BridgeConnector::fromRegistry()->getSessionService();
+        return Registry::getRegistry()->getService(SessionServiceBridge::class);
     }
 
-    public abstract static function getOrderCacheUUID();
+    public abstract function getOrderUUID();
 
-    public abstract static function setOrderCacheUUID($uuid);
+    public abstract function setOrderUUID($uuid);
 
     /**
-     * @return OrderCache
+     * @return Order
      */
-    public abstract static function getOrderCacheObj();
+    public abstract function getOrderObj();
 
-    public abstract static function setOrderCacheObj($obj);
+    public abstract function setOrderObj($obj);
 
-    public abstract static function getMerchantUUID();
+    public abstract function getMerchantUUID();
 
-    public abstract static function setMerchantUUID($uuid) ;
+    public abstract function setMerchantUUID($uuid) ;
 
-    public abstract static function getShopConfigUUID();
+    public abstract function getShopConfigUUID();
 
-    public abstract static function setShopConfigUUID($uuid);
+    public abstract function setShopConfigUUID($uuid);
 
     /**
      * @return ShopConfig
      */
-    public abstract static function getShopConfigObj();
+    public abstract function getShopConfigObj();
 
-    public abstract static function setShopConfigObj(ShopConfig $obj);
+    public abstract function setShopConfigObj(ShopConfig $obj);
 
     /**
      * @return Merchant
      */
-    public abstract static function getMerchantObj();
+    public abstract function getMerchantObj();
 
-    public abstract static function setMerchantObj($obj);
+    public abstract function setMerchantObj($obj);
 }
