@@ -27,9 +27,9 @@ class ControllerBridge extends Controller
             }
             $controller->process();
         } catch (Throwable $e) {
-            //todo
+            $this->logger->error("Exception: ", $e);
         } catch (Exception $e) {
-            //todo
+            $this->logger->error("Exception: ", $e);
         }
     }
 }
