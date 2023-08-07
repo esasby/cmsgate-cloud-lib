@@ -74,6 +74,6 @@ class AdminBridgeShopConfigPage extends AdminBridgePage implements StorableFormP
     }
 
     public function getStorage() {
-        Registry::getRegistry()->getConfigStorage();
+        return Registry::getRegistry()->getConfigStorage();
     }
 }
