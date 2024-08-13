@@ -58,8 +58,7 @@ abstract class AdminBridgePage extends PageHRO implements DisplayErrorPage
                         attribute::clazz("collapse navbar-collapse"),
                         attribute::id("navbarCollapse"),
                         bootstrap::elementNavBarList(
-                            bootstrap::elementNavBarListItem("#", "Configuration", $this->getNavItemId() == RedirectServiceBridge::PATH_CONFIG),
-                            bootstrap::elementNavBarListItem("#", "Orders", $this->getNavItemId() == RedirectServiceBridge::PATH_ORDERS)
+                            bootstrap::elementNavBarListItem("#", "Configuration", $this->getNavItemId() == RedirectServiceBridge::PATH_CONFIG)
                         )
                     ),
                     element::a(

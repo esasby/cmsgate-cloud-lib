@@ -31,7 +31,7 @@ class CryptServiceImpl extends CryptService
     }
 
     private function keyFileName() {
-        return preg_replace('/\/+/', "/", $this->keyDir) . '/' . Registry::getRegistry()->getModuleDescriptor()->getModuleMachineName() . '-key.bin';
+        return preg_replace('/\/+/', DIRECTORY_SEPARATOR, $this->keyDir) . DIRECTORY_SEPARATOR . Registry::getRegistry()->getModuleDescriptor()->getModuleMachineName() . '-key.bin';
     }
 
     public function encrypt($data) {

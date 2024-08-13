@@ -47,7 +47,7 @@ abstract class MerchantService extends Service
             $authHash = $this->getAuthHashById($_COOKIE[CookieBridge::ID]);
             if (($authHash !== $_COOKIE[CookieBridge::HASH])) {
                 setcookie(CookieBridge::ID, "", time() - 3600 * 24 * 30 * 12, "/");
-                setcookie(CookieBridge::HASH, "", time() - 3600 * 24 * 30 * 12, "/", null, null, true); // httponly !!!
+                setcookie(CookieBridge::HASH, "", time() - 3600 * 24 * 30 * 12, "/");//, null, null, true); // httponly !!!
                 throw new CMSGateException('Cookies hash is incorrect', 'Access denied. Please log in');
             }
             self::setOrUpdateCookie($_COOKIE[CookieBridge::ID], $_COOKIE[CookieBridge::HASH]);
@@ -64,9 +64,10 @@ abstract class MerchantService extends Service
         }
     }
 
-    public static function setOrUpdateCookie($authId, $hash) {
+    public static function setOrUpdateCookie($authId, $hash)
+    {
         setcookie(CookieBridge::ID, $authId, time() + 60 * 15, "/");
-        setcookie(CookieBridge::HASH, $hash, time() + 60 * 15, "/", null, null, true); // httponly !!!
+        setcookie(CookieBridge::HASH, $hash, time() + 60 * 15, "/");//, null, null, true); // httponly !!!
     }
 
     /**

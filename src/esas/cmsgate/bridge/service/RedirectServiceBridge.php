@@ -7,7 +7,6 @@ use esas\cmsgate\service\RedirectService;
 class RedirectServiceBridge extends RedirectService implements RedirectServiceMerchant
 {
     const PATH_CONFIG = '/config';
-    const PATH_ORDERS = '/orders';
     const PATH_CONFIG_SECRET_NEW = '/config/secret/new';
     const PATH_CONFIG_LOGIN = '/config/login';
     const PATH_CONFIG_LOGOUT = '/config/logout';
